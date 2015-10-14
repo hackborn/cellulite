@@ -1,7 +1,7 @@
-#ifndef KT_CNS_H_
-#define KT_CNS_H_
+#ifndef KT_APP_CNS_H_
+#define KT_APP_CNS_H_
 
-#include "velocity_cube.h"
+#include "../math/geometry.h"
 
 namespace kt {
 
@@ -23,8 +23,8 @@ public:
 	// Size of a single particle (which, at 1,1, is the same size as a cell).
 	glm::vec2			mParticleSize = glm::vec2(1, 1);
 
-	// The current processing velocities.
-	cs::VelocityCube	mVelocities;
+	// The visible world bounds.
+	kt::math::Cube		mWorldBounds;
 };
 
 } // namespace kt

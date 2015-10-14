@@ -4,6 +4,7 @@
 #include <memory>
 #include <cinder/Color.h>
 #include <cinder/Vector.h>
+#include "kt/math/bezier.h"
 
 namespace cs {
 class Particle;
@@ -19,10 +20,16 @@ public:
 	Particle() { }
 	explicit Particle(const glm::vec3 &pos) : mPosition(pos) { }
 
-	glm::vec3		mPosition = glm::vec3(0, 0, 0),
-					mVelocity = glm::vec3(0, 0, 0);
+	glm::vec3			mPosition = glm::vec3(0),
+						mVelocity = glm::vec3(0);
 	// A 32-bit colour, encoded into a float
-	float			mColor;
+	float				mColor;
+	size_t				mCount = 0;
+
+//	glm::vec3			mStart = glm::vec3(0),
+//						mTarget = glm::vec3(0);
+
+	kt::math::Bezier3f	mCurve;
 };
 
 } // namespace cs

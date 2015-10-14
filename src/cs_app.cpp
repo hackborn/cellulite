@@ -2,18 +2,21 @@
 
 #include <cinder/app/RendererGl.h>
 #include <cinder/gl/gl.h>
-#include "kt_environment.h"
-#include "velocity_generator.h"
+#include "kt/app/kt_environment.h"
 
 namespace cs {
 
 BasicApp::BasicApp()
 		: mPicker(mCamera)
-		, mParticleRender(mCns, mSettings) {
+		, mGenerate(mCns, mSettings)
+		, mParticleRender(mCns, mSettings, mGenerate, mParticles) {
 	
 	// SETUP PICKER
 	const glm::vec2		window_size(static_cast<float>(getWindowWidth()), static_cast<float>(getWindowHeight()));
 	mPicker.setTo(window_size);
+
+	// SETUP CAMERA
+	mCameraOrtho.setOrtho(0.0f, window_size.x, window_size.y, 0.0f, -1.0f, 1.0f);
 
 	// SETUP FBO
 	ci::gl::Fbo::Format format;
@@ -31,25 +34,40 @@ BasicApp::BasicApp()
 	if (!glsl) throw std::runtime_error("App can't create shader");
 	mBatch = ci::gl::Batch::create(mesh, glsl);
 
-	// SETUP CAMERA
-	mCameraOrtho.setOrtho(0.0f, window_size.x, window_size.y, 0.0f, -1.0f, 1.0f);
-
-	// SETUP VELOCITY VOXELS
-	createVelocityCube(mSettings.mPlaneDepth, mCns.mVelocities);
-//	RandomGenerator			gen(mSettings.mRndMin, mSettings.mRndMax);
-	PolyLineGenerator		gen(ci::PolyLine3f(), mSettings.mRndMin, mSettings.mRndMax);
-	gen.update(mCns.mVelocities);
+	// SETUP METRICS
+	setupWorldBounds(0.0f, -80.0f, mCns.mWorldBounds);
 
 	// SETUP PARTICLES
-	math::Cube				cube(mCns.mVelocities.getBounds());
+	RandomGenerator			gen;
+	mParticles.resize(mSettings.mParticleCount);
+	gen.update(mCns.mWorldBounds, mParticles);
+	for (auto& p : mParticles) {
+//		const glm::vec3		unit_pos(ci::Rand::randFloat(), ci::Rand::randFloat(), ci::Rand::randFloat());
+//		const glm::vec3		pos(mCns.mWorldBounds.atUnit(unit_pos));
+		p.mCurve.mP0 = p.mCurve.mP3;
+//		p.mCurve.mP3 = pos;
+	}
+#if 0
+	size_t					pc = 0;
 	for (size_t k=0; k<mSettings.mParticleCount; ++k) {
 		const glm::vec3		unit_pos(ci::Rand::randFloat(), ci::Rand::randFloat(), ci::Rand::randFloat());
-		const glm::vec3		pos(cube.atUnit(unit_pos));
+		const glm::vec3		pos(mCns.mWorldBounds.atUnit(unit_pos));
 		ParticleRef			p = std::make_shared<Particle>(pos);
 		if (!p) continue;
+		p->mCurve.mP0 = p->mPosition;
+		p->mCurve.mP3 = p->mPosition;
 		p->mColor = Particle::encodeColor(ci::ColorA(1, 1, 1, 1));
+		p->mCount = (pc++);
+		if (pc > 5) pc = 0;
 		mParticleRender.push_back(p);
 	}
+#endif
+	// SETUP VELOCITY VOXELS
+//	RandomGenerator			gen(mSettings.mRndMin, mSettings.mRndMax);
+//	PolyLineGenerator		gen(ci::PolyLine3f(), mSettings.mRndMin, mSettings.mRndMax);
+//	gen.update(mCns.mWorldBounds, mParticleRender.mParticles);
+
+	mGenerate.start(mParticles);
 }
 
 void BasicApp::prepareSettings(Settings* s) {
@@ -63,14 +81,6 @@ void BasicApp::prepareSettings(Settings* s) {
 
 void BasicApp::setup() {
 	base::setup();
-
-#if 0
-	for (const auto& plane : mCns.mVelocities.mPlanes) {
-		int32_t w = plane.mUR.x - plane.mLL.x + 1;
-		int32_t h = plane.mUR.y - plane.mLL.y + 1;
-		std::cout << "z=" << plane.mZ << " w=" << w << " h=" << h << " size=" << (w*h) << std::endl;
-	}
-#endif
 }
 
 void BasicApp::mouseDrag(ci::app::MouseEvent event ) {
@@ -91,6 +101,7 @@ void BasicApp::keyDown(ci::app::KeyEvent event ) {
 }
 
 void BasicApp::onUpdate() {
+	mGenerate.update();
 	mParticleRender.update();
 }
 
@@ -114,34 +125,13 @@ void BasicApp::onDraw() {
 	mFbo->unbindTexture();
 }
 
-void BasicApp::createVelocityCube(const int32_t max_z, VelocityCube &cube) const {
-	// Turn my perspective view into a voxel space.
-	cube.clear();
-	if (max_z <= 0) {
-		assert(false);
-		return;
-	}
-
+void BasicApp::setupWorldBounds(const float near_z, const float far_z, kt::math::Cube &cube) const {
 	const glm::ivec2		screen_ll(0, getWindowHeight()),
 							screen_ur(getWindowWidth(), 0);
-	glm::vec3				world_ll,
-							world_ur;
-	for (int32_t z = 0; z<max_z; ++z) {
-		const float			world_z = static_cast<float>(-z);
-		if (mPicker.pick(screen_ll, world_z, world_ll)
-				&& mPicker.pick(screen_ur, world_z, world_ur)) {
-			cube.mPlanes.push_back(VelocityPlane());
-			VelocityPlane&	plane(cube.mPlanes.back());
-			plane.mZ = world_z;
-			// Give a little buffer so particles can float off
-			plane.mLL = glm::ivec2(	static_cast<int>(std::lround(floorf(world_ll.x))) - 1,
-									static_cast<int>(std::lround(floorf(world_ll.y))) - 1);
-			plane.mUR = glm::ivec2(	static_cast<int>(std::lround(ceilf(world_ur.x))) + 1,
-									static_cast<int>(std::lround(ceilf(world_ur.y))) + 1);
-			plane.mOutOfBounds = ci::Rectf(	static_cast<float>(plane.mLL.x), static_cast<float>(plane.mLL.y),
-											static_cast<float>(plane.mUR.x + 1), static_cast<float>(plane.mUR.y + 1));
-		}	
-	}
+	mPicker.pick(screen_ll, near_z, cube.mNearLL);
+	mPicker.pick(screen_ur, near_z, cube.mNearUR);
+	mPicker.pick(screen_ll, far_z, cube.mFarLL);
+	mPicker.pick(screen_ur, far_z, cube.mFarUR);
 }
 
 } // namespace cs

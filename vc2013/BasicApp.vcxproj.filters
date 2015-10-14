@@ -13,6 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
+    <Filter Include="Source Files\kt">
+      <UniqueIdentifier>{af6ebf4b-c6ac-4511-9016-8f64e504024e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\kt\math">
+      <UniqueIdentifier>{24c3f1f5-cf74-4832-99b6-bd3c3be2af9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\kt\app">
+      <UniqueIdentifier>{57f6730c-4c5b-4d21-8b81-4119e9d76b09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\kt\async">
+      <UniqueIdentifier>{d52d6719-0903-48fa-9e51-1151e7ba3b76}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
@@ -27,31 +39,40 @@
     <ClCompile Include="..\src\picker_3d.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\kt_app.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\kt_environment.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\kt_string.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\particle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClInclude Include="..\src\velocity_plane.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\velocity_cube.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\velocity_generator.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\settings.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\geometry.h">
+    <ClInclude Include="..\src\noise.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\kt\math\bezier.h">
+      <Filter>Source Files\kt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\kt\math\geometry.h">
+      <Filter>Source Files\kt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\kt\app\kt_app.h">
+      <Filter>Source Files\kt\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\kt\app\kt_cns.h">
+      <Filter>Source Files\kt\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\kt\app\kt_environment.h">
+      <Filter>Source Files\kt\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\kt\app\kt_string.h">
+      <Filter>Source Files\kt\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\kt\async\worker_thread.h">
+      <Filter>Source Files\kt\async</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\generate.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\generator.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -74,18 +95,6 @@
     <ClInclude Include="..\src\picker_3d.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\kt_app.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\kt_environment.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\kt_cns.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\kt_string.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources.rc">
@@ -93,16 +102,28 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\velocity_cube.cpp">
+    <ClCompile Include="..\src\noise.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\velocity_generator.cpp">
+    <ClCompile Include="..\src\kt\math\bezier.cpp">
+      <Filter>Source Files\kt\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\kt\math\geometry.cpp">
+      <Filter>Source Files\kt\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\kt\app\kt_app.cpp">
+      <Filter>Source Files\kt\app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\kt\app\kt_environment.cpp">
+      <Filter>Source Files\kt\app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\kt\app\kt_string.cpp">
+      <Filter>Source Files\kt\app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\generate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\geometry.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\velocity_plane.cpp">
+    <ClCompile Include="..\src\generator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

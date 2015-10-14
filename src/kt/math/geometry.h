@@ -1,10 +1,10 @@
-#ifndef CS_MATH_GEOMETRY_H_
-#define CS_MATH_GEOMETRY_H_
+#ifndef KT_MATH_GEOMETRY_H_
+#define KT_MATH_GEOMETRY_H_
 
 #include <cinder/PolyLine.h>
 #include <cinder/Vector.h>
 
-namespace cs {
+namespace kt {
 namespace math {
 
 /**
@@ -32,7 +32,16 @@ float								distance_seg(const glm::vec3 &pt, const ci::PolyLine3f&, glm::vec3*
 float								distance_seg(const glm::vec3 &pt, const std::vector<ci::PolyLine3f>&, glm::vec3* out_pt = nullptr);
 
 /**
- * @class cs::Cube
+ * @func			s_curve()
+ * @brief Transform a 0-1 value to an s shape.
+ */
+template <typename T>
+T					s_curve(const T v) { return (3.0f-2.0f*v)*v*v; }
+auto const s_curvef = &s_curve<float>;
+auto const s_curved = &s_curve<double>;
+
+/**
+ * @class kt::Cube
  * @brief Simple convenience cube.
  */
 class Cube {
@@ -42,12 +51,12 @@ public:
 	// Given a unit position (all values 0-1) translate to a position in the cube.
 	glm::vec3					atUnit(const glm::vec3&) const;
 
-	//a-b-c-d starts at the ll and proceeds clockwise (ul, ur, lr)
+	// Four corners.
 	glm::vec3					mNearLL, mNearUR,
 								mFarLL, mFarUR;
 };
 
 } // namespace math
-} // namespace cs
+} // namespace kt
 
 #endif

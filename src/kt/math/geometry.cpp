@@ -1,6 +1,6 @@
 #include "geometry.h"
 
-namespace cs {
+namespace kt {
 namespace math {
 
 /**
@@ -72,7 +72,7 @@ float								distance_seg(	const glm::vec3 &pt, const std::vector<ci::PolyLine3f
 }
 
 /**
- * @class cs::Cube
+ * @class kt::Cube
  */
 glm::vec3 Cube::atUnit(const glm::vec3 &unit) const {
 	glm::vec2		ll(glm::mix(mNearLL, mFarLL, unit.z));
@@ -83,4 +83,4 @@ glm::vec3 Cube::atUnit(const glm::vec3 &unit) const {
 }
 
 } // namespace math
-} // namespace cs
+} // namespace kt

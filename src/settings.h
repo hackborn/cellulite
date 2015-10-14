@@ -20,10 +20,10 @@ public:
 
 	// Total number of planes (i.e. the voxel depth -- width and height are
 	// determined by screen size).
-	size_t				mPlaneDepth = 40;
+	size_t				mPlaneDepth = 80;
 
 	// Amount of deceleration (per frame; should be per second)
-	float				mFriction = 0.005f;
+	float				mFriction = 0.9f;
 
 	// Range of velocities for the random generator
 	float				mRndMin = -0.5f,

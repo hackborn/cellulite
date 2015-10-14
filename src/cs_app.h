@@ -3,8 +3,9 @@
 
 #include <cinder/gl/Batch.h>
 #include <cinder/gl/Fbo.h>
+#include "kt/app/kt_app.h"
+#include "generate.h"
 #include "particle_render.h"
-#include "kt_app.h"
 #include "picker_3d.h"
 #include "settings.h"
 
@@ -29,18 +30,20 @@ protected:
 	void						onDraw() override;
 
 private:
-	void						createVelocityCube(const int32_t max_z, VelocityCube&) const;
+	void						setupWorldBounds(const float near_z, const float far_z, kt::math::Cube&) const;
 
 	using base = kt::App;
 
 	cs::Settings				mSettings;
 	Picker3d					mPicker;
+	Generate					mGenerate;
+	std::vector<Particle>		mParticles;
 
 	// Drawing
+	ci::CameraOrtho				mCameraOrtho;
 	ci::gl::FboRef				mFbo;
 	ci::gl::BatchRef			mBatch;
 	ParticleRender				mParticleRender;
-	ci::CameraOrtho				mCameraOrtho;
 };
 
 } // namespace cs

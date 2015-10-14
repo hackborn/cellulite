@@ -1,5 +1,5 @@
-#ifndef KT_APP_H_
-#define KT_APP_H_
+#ifndef KT_APP_APP_H_
+#define KT_APP_APP_H_
 
 #include <cinder/app/App.h>
 #include <cinder/Camera.h>

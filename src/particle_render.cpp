@@ -6,8 +6,9 @@
 #include <cinder/gl/scoped.h>
 #include <cinder/CinderMath.h>
 #include <cinder/ImageIo.h>
-#include "kt_cns.h"
-#include "kt_environment.h"
+#include "kt/app/kt_cns.h"
+#include "kt/app/kt_environment.h"
+#include "generate.h"
 #include "settings.h"
 
 namespace cs {
@@ -25,9 +26,11 @@ ci::gl::TextureRef	make_texture(const kt::Cns&);
 /**
  * @class cs::ParticleRender
  */
-ParticleRender::ParticleRender(const kt::Cns &cns, const cs::Settings &settings)
+ParticleRender::ParticleRender(const kt::Cns &cns, const cs::Settings &settings, Generate &gen, std::vector<Particle> &p)
 		: mCns(cns)
-		, mSettings(settings) {
+		, mSettings(settings)
+		, mGenerate(gen)
+		, mParticles(p) {
 	// Load the texture
 	mTexture = make_texture(cns);
 	if (!mTexture) throw std::runtime_error("ParticleRender vbo can't create texture");
@@ -64,27 +67,24 @@ ParticleRender::ParticleRender(const kt::Cns &cns, const cs::Settings &settings)
 	mBatch = ci::gl::Batch::create( mesh, mGlsl, { { ci::geom::Attrib::CUSTOM_0, "vInstancePosition" } } );
 }
 
-void ParticleRender::push_back(const ParticleRef &j) {
-	mParticles.push_back(j);
-}
-
-void ParticleRender::erase(const ParticleRef &j) {
-	if (!j) return;
-	mParticles.erase(j);
-}
-
-void ParticleRender::erase(const ParticleList &list) {
-	mParticles -= list;
-}
-
 void ParticleRender::update() {
-//return;
-	mCns.mVelocities.update(mParticles);
-	for (auto& p : mParticles) {
-		if (!p) continue;
-		p->mVelocity *= mSettings.mFriction;
-		p->mPosition += p->mVelocity;
+	static float	T = 1.0f;
+	float			t = kt::math::s_curvef(T);
+
+	if (T >= 1.0f) {
+		if (mGenerate.hasFrame()) {
+			mGenerate.getFrame(mParticles);
+			T = 0.0f;
+			t = 0.0f;
+		}
 	}
+
+	for (auto& p : mParticles) {
+		p.mPosition = p.mCurve.point(t);
+		
+	}
+
+	T += 0.008f;
 }
 
 void ParticleRender::draw() {
@@ -110,11 +110,11 @@ void ParticleRender::drawParticles(size_t start, size_t end) {
 	// update our instance positions; map our instance data VBO, write new positions, unmap
 	glm::vec4 *data = (glm::vec4*)mInstanceDataVbo->mapReplace();
 	for (size_t k=start; k<end; ++k) {
-		const ParticleRef&		p(mParticles[k]);
-		data->x = p->mPosition.x;
-		data->y = p->mPosition.y;
-		data->z = p->mPosition.z;
-		data->w = p->mColor;
+		const Particle&			p(mParticles[k]);
+		data->x = p.mPosition.x;
+		data->y = p.mPosition.y;
+		data->z = p.mPosition.z;
+		data->w = p.mColor;
 		*data++;
 	}
 	mInstanceDataVbo->unmap();
@@ -122,29 +122,6 @@ void ParticleRender::drawParticles(size_t start, size_t end) {
 	// and draw
 	mBatch->drawInstanced(end-start);
 }
-
-#if 0
-void JotManagerView::onUpdate(const kt::UpdateParams &p) {
-	bool					has_delete = false;
-	ci::Rectf				expand(-10.0f, +10.0f, +10.0f, -10.0f);
-	ci::Rectf				out_of_frame(mMetrics.mWorldFrame + expand);
-	std::swap(out_of_frame.y1, out_of_frame.y2);
-	for (auto& j : mMoving) {
-		glm::vec3&		pos(j->mPosition);
-		pos += j->mVelocity;
-		if (!out_of_frame.contains(kt::math::xy(pos))) {
-			j->mDelete = true;
-			has_delete = true;
-			// XXX Want to recycle these
-			erase(j);
-		}
-	}
-	if (has_delete) {
-		const auto cnd = [](const JotRef &j)->bool { return j->mDelete; };
-		mMoving.erase(std::remove_if(mMoving.begin(), mMoving.end(), cnd), mMoving.end());
-	}
-}
-#endif
 
 namespace {
 

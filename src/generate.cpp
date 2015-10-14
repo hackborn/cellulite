@@ -1,0 +1,85 @@
+#include "generate.h"
+
+#include "kt/app/kt_cns.h"
+#include "settings.h"
+
+namespace cs {
+
+/**
+ * @class cs::Generate
+ */
+Generate::Generate(const kt::Cns &cns, const cs::Settings &s)
+		: mCns(cns)
+		, mSettings(s)
+		, mWorker([this](Op &op){handle(op);}) {
+//	mGenerator.reset(new PolyLineGenerator());
+	mRndGenerator.reset(new RandomGenerator());
+	mLineGenerator.reset(new RandomLineGenerator());
+}
+
+void Generate::start(const std::vector<Particle> &list) {
+	mWorker.run([this, &list](Op &op) {
+		op.mWorldBounds = mCns.mWorldBounds;
+		op.mGenerator = nextGenerator();
+		op.mParticles = list;
+	});
+}
+
+void Generate::update() {
+	mWorker.update();
+}
+
+void Generate::handle(Op &op) {
+	mHasFrame = true;
+	mFrame.swap(op.mParticles);
+}
+
+void Generate::getFrame(std::vector<Particle> &out) {
+	if (!mHasFrame) return;
+
+	const size_t		size = (out.size() <= mFrame.size() ? out.size() : mFrame.size());
+	if (size < 1) return;
+
+	// Copy in the new data
+	Particle*			src(&mFrame.front());
+	Particle*			src_end = src + size;
+	Particle*			dst(&out.front());
+	while (src < src_end) {
+		src->mCurve.mP0 = dst->mPosition;
+		dst->mCurve = src->mCurve;
+
+		++src;
+		++dst;
+	}
+
+	// Generate the next frame
+	mHasFrame = false;
+	mWorker.run([this](Op &op) {
+		op.mWorldBounds = mCns.mWorldBounds;
+		op.mGenerator = nextGenerator();
+		op.mParticles.swap(mFrame);
+	});
+}
+
+GeneratorRef Generate::nextGenerator() {
+	if (mCurrentGenerator == mLineGenerator) {
+		mCurrentGenerator = mRndGenerator;
+	} else {
+		mCurrentGenerator = mLineGenerator;
+	}
+	return mCurrentGenerator;
+}
+
+/**
+ * @class cs::Generate::Op
+ */
+Generate::Op::Op() {
+}
+
+void Generate::Op::run(int&) {
+	if (!mGenerator) return;
+
+	mGenerator->update(mWorldBounds, mParticles);
+}
+
+} // namespace cs

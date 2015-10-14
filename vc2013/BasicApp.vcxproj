@@ -279,33 +279,36 @@ xcopy /y "..\..\..\lib\msw\x86\d3dcompiler_46.dll" "$(OutDir)"</Command>
   <ItemGroup />
   <ItemGroup>
     <ClCompile Include="..\src\cs_app.cpp" />
-    <ClCompile Include="..\src\geometry.cpp" />
-    <ClCompile Include="..\src\kt_app.cpp" />
-    <ClCompile Include="..\src\kt_environment.cpp" />
-    <ClCompile Include="..\src\kt_string.cpp" />
+    <ClCompile Include="..\src\generate.cpp" />
+    <ClCompile Include="..\src\generator.cpp" />
+    <ClCompile Include="..\src\kt\app\kt_app.cpp" />
+    <ClCompile Include="..\src\kt\app\kt_environment.cpp" />
+    <ClCompile Include="..\src\kt\app\kt_string.cpp" />
+    <ClCompile Include="..\src\kt\math\bezier.cpp" />
+    <ClCompile Include="..\src\kt\math\geometry.cpp" />
+    <ClCompile Include="..\src\noise.cpp" />
     <ClCompile Include="..\src\particle.cpp" />
     <ClCompile Include="..\src\particle_render.cpp" />
     <ClCompile Include="..\src\picker_3d.cpp" />
-    <ClCompile Include="..\src\velocity_cube.cpp" />
-    <ClCompile Include="..\src\velocity_generator.cpp" />
-    <ClCompile Include="..\src\velocity_plane.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h" />
     <ClInclude Include="..\src\cs_app.h" />
-    <ClInclude Include="..\src\geometry.h" />
-    <ClInclude Include="..\src\kt_app.h" />
-    <ClInclude Include="..\src\kt_cns.h" />
-    <ClInclude Include="..\src\kt_environment.h" />
-    <ClInclude Include="..\src\kt_string.h" />
+    <ClInclude Include="..\src\generate.h" />
+    <ClInclude Include="..\src\generator.h" />
+    <ClInclude Include="..\src\kt\app\kt_app.h" />
+    <ClInclude Include="..\src\kt\app\kt_cns.h" />
+    <ClInclude Include="..\src\kt\app\kt_environment.h" />
+    <ClInclude Include="..\src\kt\app\kt_string.h" />
+    <ClInclude Include="..\src\kt\async\worker_thread.h" />
+    <ClInclude Include="..\src\kt\math\bezier.h" />
+    <ClInclude Include="..\src\kt\math\geometry.h" />
+    <ClInclude Include="..\src\noise.h" />
     <ClInclude Include="..\src\particle.h" />
     <ClInclude Include="..\src\particle_list.h" />
     <ClInclude Include="..\src\particle_render.h" />
     <ClInclude Include="..\src\picker_3d.h" />
     <ClInclude Include="..\src\settings.h" />
-    <ClInclude Include="..\src\velocity_cube.h" />
-    <ClInclude Include="..\src\velocity_generator.h" />
-    <ClInclude Include="..\src\velocity_plane.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

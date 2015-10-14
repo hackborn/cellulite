@@ -3,10 +3,12 @@
 
 #include <cinder/gl/Batch.h>
 #include <cinder/gl/Texture.h>
+#include "noise.h"
 #include "particle_list.h"
 
 namespace kt { class Cns; }
 namespace cs {
+class Generate;
 class Settings;
 
 /**
@@ -17,11 +19,7 @@ class ParticleRender {
 public:
 	ParticleRender() = delete;
 	ParticleRender(const ParticleRender&) = delete;
-	ParticleRender(const kt::Cns&, const cs::Settings&);
-
-	void						push_back(const ParticleRef&);
-	void						erase(const ParticleRef&);
-	void						erase(const ParticleList&);
+	ParticleRender(const kt::Cns&, const cs::Settings&, Generate&, std::vector<Particle>&);
 
 	void						update();
 	void						draw();
@@ -31,7 +29,9 @@ private:
 
 	const kt::Cns&				mCns;
 	const cs::Settings&			mSettings;
-	ParticleList				mParticles;
+	class Generate&				mGenerate;
+	Noise						mNoise;
+	std::vector<Particle>&		mParticles;
 
 	const size_t				BUFFER_SIZE = 2000;
 	ci::gl::VboRef				mInstanceDataVbo;
