@@ -5,17 +5,42 @@ namespace cs {
 /**
  * @class cs::Generator
  */
+void Generator::update(const kt::math::Cube &cube, ParticleList &list) {
+	list.mDuration = 2.0;
+
+	onUpdate(cube, list);
+
+	// Compute all the curve length
+	// XXX This was supposed to tell me how long I should run the animation for, but
+	// it did not in fact deliver any actionable information
+#if 0
+	list.mMaxCurveLength = 0.0f;
+	double			avg_len = 0.0;
+	for (auto& p : list) {
+		p.mCurveLength = p.mCurve.length(25);
+		avg_len += p.mCurveLength;
+
+		if (p.mCurveLength > list.mMaxCurveLength) {
+			list.mMaxCurveLength = p.mCurveLength;
+		}
+	}
+	list.mAverageCurveLength = static_cast<float>(avg_len / static_cast<double>(list.size()));
+#endif
+}
 
 /**
  * @class cs::RandomGenerator
  */
-void RandomGenerator::update(const kt::math::Cube &cube, std::vector<Particle> &list) {
+void RandomGenerator::onUpdate(const kt::math::Cube &cube, ParticleList &list) {
+	list.mDuration = 6.0;
+
 	for (auto& p : list) {
 		// Continue from the previous end point
 		p.mCurve.mP0 = p.mCurve.mP3;
-		p.mCurve.mP1 = nextPt(cube);
-		p.mCurve.mP2 = nextPt(cube);
 		p.mCurve.mP3 = nextPt(cube);
+		// Randomize the control points, but don't let it get toooo crazy
+		p.mCurve.mP1 = glm::mix(p.mCurve.mP0, nextPt(cube), 0.25f);
+		p.mCurve.mP2 = glm::mix(p.mCurve.mP3, nextPt(cube), 0.25f);
 	}
 }
 
@@ -29,7 +54,7 @@ glm::vec3 RandomGenerator::nextPt(const kt::math::Cube &cube) {
 /**
  * @class cs::PolyLineGenerator
  */
-void PolyLineGenerator::update(const kt::math::Cube &cube, std::vector<Particle> &l) {
+void PolyLineGenerator::onUpdate(const kt::math::Cube &cube, ParticleList &l) {
 	// Make up a line for now
 	if (mLine.getPoints().empty()) {
 		mLine.push_back(glm::vec3(cube.atUnit(glm::vec3(0.0f, 0.0f, 0.9f))));
@@ -59,7 +84,7 @@ void PolyLineGenerator::update(const kt::math::Cube &cube, std::vector<Particle>
 /**
  * @class cs::RandomLineGenerator
  */
-void RandomLineGenerator::update(const kt::math::Cube &cube, std::vector<Particle> &l) {
+void RandomLineGenerator::onUpdate(const kt::math::Cube &cube, ParticleList &l) {
 	nextLines(cube);
 
 	for (auto& p : l) {

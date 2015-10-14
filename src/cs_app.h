@@ -37,7 +37,7 @@ private:
 	cs::Settings				mSettings;
 	Picker3d					mPicker;
 	Generate					mGenerate;
-	std::vector<Particle>		mParticles;
+	ParticleList				mParticles;
 
 	// Drawing
 	ci::CameraOrtho				mCameraOrtho;

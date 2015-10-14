@@ -14,7 +14,7 @@ public:
 	Settings() { }
 
 	// Total number of particles
-	size_t				mParticleCount = 1000;
+	size_t				mParticleCount = 2000;
 //	size_t				mParticleCount = 10;
 //	size_t				mParticleCount = 1;
 

@@ -42,30 +42,8 @@ BasicApp::BasicApp()
 	mParticles.resize(mSettings.mParticleCount);
 	gen.update(mCns.mWorldBounds, mParticles);
 	for (auto& p : mParticles) {
-//		const glm::vec3		unit_pos(ci::Rand::randFloat(), ci::Rand::randFloat(), ci::Rand::randFloat());
-//		const glm::vec3		pos(mCns.mWorldBounds.atUnit(unit_pos));
 		p.mCurve.mP0 = p.mCurve.mP3;
-//		p.mCurve.mP3 = pos;
 	}
-#if 0
-	size_t					pc = 0;
-	for (size_t k=0; k<mSettings.mParticleCount; ++k) {
-		const glm::vec3		unit_pos(ci::Rand::randFloat(), ci::Rand::randFloat(), ci::Rand::randFloat());
-		const glm::vec3		pos(mCns.mWorldBounds.atUnit(unit_pos));
-		ParticleRef			p = std::make_shared<Particle>(pos);
-		if (!p) continue;
-		p->mCurve.mP0 = p->mPosition;
-		p->mCurve.mP3 = p->mPosition;
-		p->mColor = Particle::encodeColor(ci::ColorA(1, 1, 1, 1));
-		p->mCount = (pc++);
-		if (pc > 5) pc = 0;
-		mParticleRender.push_back(p);
-	}
-#endif
-	// SETUP VELOCITY VOXELS
-//	RandomGenerator			gen(mSettings.mRndMin, mSettings.mRndMax);
-//	PolyLineGenerator		gen(ci::PolyLine3f(), mSettings.mRndMin, mSettings.mRndMax);
-//	gen.update(mCns.mWorldBounds, mParticleRender.mParticles);
 
 	mGenerate.start(mParticles);
 }
@@ -132,6 +110,20 @@ void BasicApp::setupWorldBounds(const float near_z, const float far_z, kt::math:
 	mPicker.pick(screen_ur, near_z, cube.mNearUR);
 	mPicker.pick(screen_ll, far_z, cube.mFarLL);
 	mPicker.pick(screen_ur, far_z, cube.mFarUR);
+
+	// Expand so I don't have borders
+	const float				exp_frac = 0.25f;
+	const glm::vec3			near_exp(	(cube.mNearUR.x-cube.mNearLL.x) * exp_frac,
+										(cube.mNearUR.y-cube.mNearLL.y) * exp_frac,
+										0.0f);
+	const glm::vec3			far_exp(	(cube.mFarUR.x-cube.mFarLL.x) * exp_frac,
+										(cube.mFarUR.y-cube.mFarLL.y) * exp_frac,
+										0.0f);
+
+	cube.mNearLL -= near_exp;
+	cube.mNearUR += near_exp;
+	cube.mFarLL -= far_exp;
+	cube.mFarUR += far_exp;
 }
 
 } // namespace cs

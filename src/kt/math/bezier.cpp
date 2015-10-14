@@ -1,5 +1,7 @@
 #include "bezier.h"
 
+#include "geometry.h"
+
 namespace kt {
 namespace math {
 
@@ -33,6 +35,19 @@ glm::vec3 Bezier3f::point(const float t) const {
 	p += ttt * mP3; //fourth term
 
 	return p;
+}
+
+float Bezier3f::length(const size_t steps) const {
+	float					len = 0.0f;
+	glm::vec3				last_pt = mP0;
+	const float				total_steps = static_cast<float>(steps-1);
+	for (size_t k=0; k<steps; ++k) {
+		const glm::vec3		next_pt = point(static_cast<float>(k) /total_steps);
+		len += glm::distance(last_pt, next_pt);
+
+		last_pt = next_pt;
+	}
+	return len;
 }
 
 } // namespace math

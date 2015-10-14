@@ -20,9 +20,11 @@ public:
 
 	// Update the curve. Ideally, treat the curve's endpoint
 	// as the particle's current position.
-	virtual void		update(const kt::math::Cube&, std::vector<Particle>&) = 0;
+	void				update(const kt::math::Cube&, ParticleList&);
 
 protected:
+	virtual void		onUpdate(const kt::math::Cube&, ParticleList&) = 0;
+
 	Generator() { }
 };
 
@@ -34,7 +36,7 @@ class RandomGenerator : public Generator {
 public:
 	RandomGenerator() { }
 
-	void				update(const kt::math::Cube&, std::vector<Particle>&) override;
+	void				onUpdate(const kt::math::Cube&, ParticleList&) override;
 
 private:
 	glm::vec3			nextPt(const kt::math::Cube&);
@@ -49,19 +51,14 @@ private:
 class PolyLineGenerator : public Generator {
 public:
 	PolyLineGenerator() { }
-	PolyLineGenerator(const ci::PolyLine3f &line, const float min, const float max) : mLine(line), mMin(min), mMax(max) { }
+	PolyLineGenerator(const ci::PolyLine3f &line) : mLine(line) { }
 
-	void				update(const kt::math::Cube&, std::vector<Particle>&) override;
+	void				onUpdate(const kt::math::Cube&, ParticleList&) override;
 
 private:
 	std::vector<ci::PolyLine3f> mLines;
 	ci::PolyLine3f		mLine;
 	cinder::Rand		mRand;
-	const float			mMin = -0.5f,
-						mMax = 0.05f;
-	const float			mDistance = 10.0f;
-	const float			mLineMin = 0.25f,
-						mLineMax = 32.0f;
 };
 
 /**
@@ -72,7 +69,7 @@ class RandomLineGenerator : public Generator {
 public:
 	RandomLineGenerator() { }
 
-	void				update(const kt::math::Cube&, std::vector<Particle>&) override;
+	void				onUpdate(const kt::math::Cube&, ParticleList&) override;
 
 private:
 	void				nextLines(const kt::math::Cube&);

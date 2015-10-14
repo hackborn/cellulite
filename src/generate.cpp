@@ -12,12 +12,11 @@ Generate::Generate(const kt::Cns &cns, const cs::Settings &s)
 		: mCns(cns)
 		, mSettings(s)
 		, mWorker([this](Op &op){handle(op);}) {
-//	mGenerator.reset(new PolyLineGenerator());
 	mRndGenerator.reset(new RandomGenerator());
 	mLineGenerator.reset(new RandomLineGenerator());
 }
 
-void Generate::start(const std::vector<Particle> &list) {
+void Generate::start(const ParticleList &list) {
 	mWorker.run([this, &list](Op &op) {
 		op.mWorldBounds = mCns.mWorldBounds;
 		op.mGenerator = nextGenerator();
@@ -32,9 +31,12 @@ void Generate::update() {
 void Generate::handle(Op &op) {
 	mHasFrame = true;
 	mFrame.swap(op.mParticles);
+	mFrame.mMaxCurveLength = op.mParticles.mMaxCurveLength;
+	mFrame.mAverageCurveLength = op.mParticles.mAverageCurveLength;
+	mFrame.mDuration = op.mParticles.mDuration;
 }
 
-void Generate::getFrame(std::vector<Particle> &out) {
+void Generate::getFrame(ParticleList &out) {
 	if (!mHasFrame) return;
 
 	const size_t		size = (out.size() <= mFrame.size() ? out.size() : mFrame.size());
@@ -51,6 +53,9 @@ void Generate::getFrame(std::vector<Particle> &out) {
 		++src;
 		++dst;
 	}
+	out.mMaxCurveLength = mFrame.mMaxCurveLength;
+	out.mAverageCurveLength = mFrame.mAverageCurveLength;
+	out.mDuration = mFrame.mDuration;
 
 	// Generate the next frame
 	mHasFrame = false;

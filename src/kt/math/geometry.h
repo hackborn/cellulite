@@ -13,8 +13,8 @@ namespace math {
 inline glm::vec2	xy(const glm::vec3 &v) { return glm::vec2(v.x, v.y); }
 inline float		lengthSquared(const glm::vec2 &v) { return v.x*v.x + v.y*v.y; }
 inline float		lengthSquared(const glm::vec3 &v) { return v.x*v.x + v.y*v.y + v.z*v.z; }
-inline float		distanceSquared(const glm::vec2 &a, const glm::vec2 &b) { return lengthSquared(a - b); }
-inline float		distanceSquared(const glm::vec3 &a, const glm::vec3 &b) { return lengthSquared(a - b); }
+inline float		distanceSquared(const glm::vec2 &a, const glm::vec2 &b) { return lengthSquared(b - a); }
+inline float		distanceSquared(const glm::vec3 &a, const glm::vec3 &b) { return lengthSquared(b - a); }
 
 /**
  * @func distance_seg

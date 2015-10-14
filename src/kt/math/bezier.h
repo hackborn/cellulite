@@ -18,6 +18,8 @@ public:
 	void			clear();
 
 	glm::vec3		point(const float t /* 0 - 1*/) const;
+	// Simple measuring utility, very approximate result
+	float			length(const size_t steps = 100) const;
 
 	// Start, control 1, control 2, end
 	glm::vec3		mP0, mP1, mP2, mP3;

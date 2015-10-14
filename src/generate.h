@@ -3,7 +3,6 @@
 
 #include "kt/async/worker_thread.h"
 #include "generator.h"
-#include "particle_list.h"
 
 namespace kt { class Cns; }
 namespace cs {
@@ -20,11 +19,11 @@ public:
 	Generate(const Generate&) = delete;
 	Generate(const kt::Cns&, const cs::Settings&);
 
-	void					start(const std::vector<Particle>&);
+	void					start(const ParticleList&);
 	void					update();
 
 	bool					hasFrame() const { return mHasFrame; }
-	void					getFrame(std::vector<Particle>&);
+	void					getFrame(ParticleList&);
 
 private:
 	GeneratorRef			nextGenerator();
@@ -42,13 +41,13 @@ private:
 		kt::math::Cube		mWorldBounds;
 		// Handle generating the new values
 		GeneratorRef		mGenerator;
-		std::vector<Particle>	mParticles;
+		ParticleList		mParticles;
 	};
 
 	const kt::Cns&			mCns;
 	const cs::Settings&		mSettings;
 	bool					mHasFrame = false;
-	std::vector<Particle>	mFrame;
+	ParticleList			mFrame;
 	GeneratorRef			mRndGenerator;
 	GeneratorRef			mLineGenerator;
 	GeneratorRef			mCurrentGenerator;

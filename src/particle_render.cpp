@@ -26,7 +26,7 @@ ci::gl::TextureRef	make_texture(const kt::Cns&);
 /**
  * @class cs::ParticleRender
  */
-ParticleRender::ParticleRender(const kt::Cns &cns, const cs::Settings &settings, Generate &gen, std::vector<Particle> &p)
+ParticleRender::ParticleRender(const kt::Cns &cns, const cs::Settings &settings, Generate &gen, ParticleList &p)
 		: mCns(cns)
 		, mSettings(settings)
 		, mGenerate(gen)
@@ -68,23 +68,20 @@ ParticleRender::ParticleRender(const kt::Cns &cns, const cs::Settings &settings,
 }
 
 void ParticleRender::update() {
-	static float	T = 1.0f;
-	float			t = kt::math::s_curvef(T);
-
-	if (T >= 1.0f) {
+	if (mTimer.elapsed() >= mDuration) {
 		if (mGenerate.hasFrame()) {
 			mGenerate.getFrame(mParticles);
-			T = 0.0f;
-			t = 0.0f;
+			mHasFrame = true;
+			mTimer.start();
+			mDuration = mParticles.mDuration;
 		}
 	}
 
+	const float		t = (mHasFrame ? static_cast<float>(kt::math::s_curved(mTimer.elapsed() / mDuration)) : 0.0f);
 	for (auto& p : mParticles) {
 		p.mPosition = p.mCurve.point(t);
 		
 	}
-
-	T += 0.008f;
 }
 
 void ParticleRender::draw() {

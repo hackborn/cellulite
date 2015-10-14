@@ -25,6 +25,9 @@
     <Filter Include="Source Files\kt\async">
       <UniqueIdentifier>{d52d6719-0903-48fa-9e51-1151e7ba3b76}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\kt\time">
+      <UniqueIdentifier>{fa4d4809-2b5c-4406-98c3-3b87c80bc4f6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
@@ -75,6 +78,12 @@
     <ClInclude Include="..\src\generator.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\particle_list.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\kt\time\seconds.h">
+      <Filter>Source Files\kt\time</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
@@ -84,9 +93,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\particle.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\particle_list.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\cs_app.h">
@@ -125,6 +131,9 @@
     </ClCompile>
     <ClCompile Include="..\src\generator.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\kt\time\seconds.cpp">
+      <Filter>Source Files\kt\time</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

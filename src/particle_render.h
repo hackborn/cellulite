@@ -3,6 +3,7 @@
 
 #include <cinder/gl/Batch.h>
 #include <cinder/gl/Texture.h>
+#include "kt/time/seconds.h"
 #include "noise.h"
 #include "particle_list.h"
 
@@ -19,7 +20,7 @@ class ParticleRender {
 public:
 	ParticleRender() = delete;
 	ParticleRender(const ParticleRender&) = delete;
-	ParticleRender(const kt::Cns&, const cs::Settings&, Generate&, std::vector<Particle>&);
+	ParticleRender(const kt::Cns&, const cs::Settings&, Generate&, ParticleList&);
 
 	void						update();
 	void						draw();
@@ -31,7 +32,10 @@ private:
 	const cs::Settings&			mSettings;
 	class Generate&				mGenerate;
 	Noise						mNoise;
-	std::vector<Particle>&		mParticles;
+	ParticleList&				mParticles;
+	kt::time::Seconds			mTimer;
+	double						mDuration = 0.0;
+	bool						mHasFrame = false;
 
 	const size_t				BUFFER_SIZE = 2000;
 	ci::gl::VboRef				mInstanceDataVbo;
