@@ -16,11 +16,11 @@ public:
 	Settings() { }
 
 	// Total number of main particles
-	size_t				mParticleCount = 2000;
+	size_t				mParticleCount = 5000;
 //	size_t				mParticleCount = 10;
 //	size_t				mParticleCount = 1;
 	// Total number of accent particles
-	size_t				mAccentParticleCount = 4000;
+	size_t				mAccentParticleCount = 10000;
 
 	// The far and near z planes that enclose the particles.
 	kt::math::Rangef	mRangeZ = kt::math::Rangef(-80.0f, 0.0f);

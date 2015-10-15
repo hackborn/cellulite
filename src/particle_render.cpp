@@ -98,12 +98,16 @@ void ParticleRender::update() {
 				// Blur out a little based on distance
 				p.mAlpha *= mSettings.mRangeZ.convert(p.mPosition.z, kt::math::Rangef(0.1f, 1.0f));
 
-				if (p.mHasAccents && mAccentParticles.size() < mSettings.mAccentParticleCount) {
-					mAccentParticles.push_back(Particle(p.mPosition, p.mAlpha * 0.2f));
+				if (mAddAccentTick == 0 && p.mHasAccents && mAccentParticles.size() < mSettings.mAccentParticleCount) {
+					mAccentParticles.push_back(Particle(p.mPosition, p.mAlpha * 0.4f));
 				}
 			}
 		}
 	}
+
+	static const size_t		ADD_ACCENT_TICKS = 5;
+	++mAddAccentTick;
+	if (mAddAccentTick >= ADD_ACCENT_TICKS) mAddAccentTick = 0;
 }
 
 void ParticleRender::draw() {
@@ -122,7 +126,7 @@ void ParticleRender::updateAccents() {
 	// Accents always fall down and fade out, with a little random forces thrown in.
 
 	for (auto& p : mAccentParticles) {
-		p.mAlpha -= 0.001f;
+		p.mAlpha -= 0.002f;
 		if (p.mAlpha <= 0.0f) {
 			std::swap(p, mAccentParticles.back());
 		} else {

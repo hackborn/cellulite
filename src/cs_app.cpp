@@ -53,7 +53,7 @@ void BasicApp::prepareSettings(Settings* s) {
 	if (s) {
 //		s->setTitle("C. Clara Run");
 		s->setWindowSize(glm::ivec2(1920, 1080));
-//		s->setFullScreen(true);
+		s->setFullScreen(true);
 //		s->setConsoleWindowEnabled(true);
 	}
 }

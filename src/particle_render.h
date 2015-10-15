@@ -37,13 +37,14 @@ private:
 	ParticleList&				mParticles;
 	ParticleList				mAccentParticles;
 	cs::InterpCube				mAccentForces;
+	size_t						mAddAccentTick = 0;
 	kt::time::Seconds			mTimer;
 	enum class Stage			{ kTransition, kHold };
 	Stage						mStage = Stage::kHold;
 	double						mTransitionDuration = 0.0,
 								mHoldDuration = 0.0;
 
-	const size_t				BUFFER_SIZE = 2000;
+	const size_t				BUFFER_SIZE = 10000;
 	ci::gl::VboRef				mInstanceDataVbo;
 	ci::gl::TextureRef			mTexture;
 	ci::gl::GlslProgRef			mGlsl;

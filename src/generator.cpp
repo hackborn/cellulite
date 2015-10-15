@@ -32,7 +32,7 @@ void Generator::update(const GeneratorParams &p, ParticleList &list) {
 
 	// Assign 20 random accent generators.
 	for (auto& p : list) p.mHasAccents = false;
-	for (size_t k=0; k<20; ++k) {
+	for (size_t k=0; k<100; ++k) {
 		size_t		idx = mRand.nextUint(list.size()-1);
 		list[idx].mHasAccents = true;
 	}
@@ -229,7 +229,9 @@ void RandomLineGenerator::nextLines(const kt::math::Cube &cube) {
  * @class cs::ImageGenerator
  */
 void ImageGenerator::onUpdate(const GeneratorParams &gp, ParticleList &l) {
-	ci::Surface8u		s(ci::loadImage(kt::env::expand("$(DATA)/images/Eagle 1.jpg")));
+//l.mHoldDuration = 10.0;
+//	ci::Surface8u		s(ci::loadImage(kt::env::expand("$(DATA)/images/Eagle 1.jpg")));
+	ci::Surface8u		s(ci::loadImage(kt::env::expand("$(DATA)/images/vox_siren.png")));
 
 	const int			total_src_size  = s.getWidth() * s.getHeight();
 	const float			src_w(static_cast<float>(s.getWidth())),
@@ -276,7 +278,7 @@ void ImageGenerator::onUpdate(const GeneratorParams &gp, ParticleList &l) {
 
 		// Blur things out a little on the blue, because why not, even though you
 		// really can't tell.
-		p.mEndAlpha = glm::mix(0.1f, 1.0f, static_cast<float>(clr.b)/255.0f);
+//		p.mEndAlpha = glm::mix(0.1f, 1.0f, static_cast<float>(clr.b)/255.0f);
 
 		if (++x >= cols) {
 			x = 0;
