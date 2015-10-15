@@ -8,7 +8,7 @@
 #include <cinder/ImageIo.h>
 #include "kt/app/kt_cns.h"
 #include "kt/app/kt_environment.h"
-#include "generate.h"
+#include "feeder.h"
 #include "settings.h"
 
 namespace cs {
@@ -26,10 +26,10 @@ ci::gl::TextureRef	make_texture(const kt::Cns&);
 /**
  * @class cs::ParticleRender
  */
-ParticleRender::ParticleRender(const kt::Cns &cns, const cs::Settings &settings, Generate &gen, ParticleList &p)
+ParticleRender::ParticleRender(const kt::Cns &cns, const cs::Settings &settings, Feeder &f, ParticleList &p)
 		: mCns(cns)
 		, mSettings(settings)
-		, mGenerate(gen)
+		, mFeeder(f)
 		, mParticles(p) {
 	// Load the texture
 	mTexture = make_texture(cns);
@@ -69,8 +69,8 @@ ParticleRender::ParticleRender(const kt::Cns &cns, const cs::Settings &settings,
 
 void ParticleRender::update() {
 	if (mTimer.elapsed() >= mDuration) {
-		if (mGenerate.hasFrame()) {
-			mGenerate.getFrame(mParticles);
+		if (mFeeder.hasFrame()) {
+			mFeeder.getFrame(mParticles);
 			mHasFrame = true;
 			mTimer.start();
 			mDuration = mParticles.mDuration;

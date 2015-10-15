@@ -49,14 +49,23 @@ protected:
  */
 class RandomGenerator : public Generator {
 public:
-	RandomGenerator() { }
+	enum class Mode		{ kAnywhere, kClosest };
+	RandomGenerator(const Mode m = Mode::kClosest) : mMode(m) { }
 
 	void				onUpdate(const GeneratorParams&, ParticleList&) override;
 
 private:
-	glm::vec3			nextPt(const kt::math::Cube&);
+	void				onUpdateAnywhere(const GeneratorParams&, ParticleList&);
+	void				onUpdateClosest(const GeneratorParams&, ParticleList&);
 
+	using PtList = std::vector<glm::vec3>;
+	glm::vec3			nextPt(const kt::math::Cube&);
+	glm::vec3			nextOffset(const float scale);
+	glm::vec3			popClosest(const glm::vec3&, PtList&) const;
+
+	const Mode			mMode;
 	cinder::Rand		mRand;
+	PtList				mClosestPts;
 };
 
 /**

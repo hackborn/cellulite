@@ -4,7 +4,7 @@
 #include <cinder/gl/Batch.h>
 #include <cinder/gl/Fbo.h>
 #include "kt/app/kt_app.h"
-#include "generate.h"
+#include "feeder.h"
 #include "particle_render.h"
 #include "picker_3d.h"
 #include "settings.h"
@@ -36,7 +36,7 @@ private:
 
 	cs::Settings				mSettings;
 	Picker3d					mPicker;
-	Generate					mGenerate;
+	Feeder						mFeeder;
 	ParticleList				mParticles;
 
 	// Drawing

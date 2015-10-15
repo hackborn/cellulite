@@ -1,4 +1,4 @@
-#include "generate.h"
+#include "feeder.h"
 
 #include "kt/app/kt_cns.h"
 #include "settings.h"
@@ -6,9 +6,9 @@
 namespace cs {
 
 /**
- * @class cs::Generate
+ * @class cs::Feeder
  */
-Generate::Generate(const kt::Cns &cns, const cs::Settings &s)
+Feeder::Feeder(const kt::Cns &cns, const cs::Settings &s)
 		: mCns(cns)
 		, mSettings(s)
 		, mWorker([this](Op &op){handle(op);}) {
@@ -17,7 +17,7 @@ Generate::Generate(const kt::Cns &cns, const cs::Settings &s)
 	mImageGenerator.reset(new ImageGenerator());
 }
 
-void Generate::start(const ParticleList &list) {
+void Feeder::start(const ParticleList &list) {
 	mParams.setTo(mCns);
 
 	mWorker.run([this, &list](Op &op) {
@@ -27,11 +27,11 @@ void Generate::start(const ParticleList &list) {
 	});
 }
 
-void Generate::update() {
+void Feeder::update() {
 	mWorker.update();
 }
 
-void Generate::handle(Op &op) {
+void Feeder::handle(Op &op) {
 	mHasFrame = true;
 	mFrame.swap(op.mParticles);
 	mFrame.mMaxCurveLength = op.mParticles.mMaxCurveLength;
@@ -39,7 +39,7 @@ void Generate::handle(Op &op) {
 	mFrame.mDuration = op.mParticles.mDuration;
 }
 
-void Generate::getFrame(ParticleList &out) {
+void Feeder::getFrame(ParticleList &out) {
 	if (!mHasFrame) return;
 
 	const size_t		size = (out.size() <= mFrame.size() ? out.size() : mFrame.size());
@@ -69,7 +69,7 @@ void Generate::getFrame(ParticleList &out) {
 	});
 }
 
-GeneratorRef Generate::nextGenerator() {
+GeneratorRef Feeder::nextGenerator() {
 	if (mCurrentGenerator == mLineGenerator) {
 		mCurrentGenerator = mRndGenerator;
 	} else if (mCurrentGenerator == mRndGenerator) {
@@ -81,12 +81,12 @@ GeneratorRef Generate::nextGenerator() {
 }
 
 /**
- * @class cs::Generate::Op
+ * @class cs::Feeder::Op
  */
-Generate::Op::Op() {
+Feeder::Op::Op() {
 }
 
-void Generate::Op::run(int&) {
+void Feeder::Op::run(int&) {
 	if (!mGenerator) return;
 
 	mGenerator->update(mParams, mParticles);

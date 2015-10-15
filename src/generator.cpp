@@ -19,9 +19,11 @@ void GeneratorParams::setTo(const kt::Cns &cns) {
  * @class cs::Generator
  */
 void Generator::update(const GeneratorParams &p, ParticleList &list) {
-	list.mDuration = 2.0;
+//	std::cout << "generator " << typeid(*this).name() << std::endl;
 
+	list.mDuration = 2.0;
 	onUpdate(p, list);
+	list.mDuration = 2.0;
 
 	// Compute all the curve length
 	// XXX This was supposed to tell me how long I should run the animation for, but
@@ -45,15 +47,51 @@ void Generator::update(const GeneratorParams &p, ParticleList &list) {
  * @class cs::RandomGenerator
  */
 void RandomGenerator::onUpdate(const GeneratorParams &gp, ParticleList &list) {
-	list.mDuration = 6.0;
+	list.mDuration = 4.0;
 
+	// Assign the start and end points.
+	if (mMode == Mode::kClosest) onUpdateClosest(gp, list);
+	else onUpdateAnywhere(gp, list);
+
+	// Randomize the control points, but don't let it get toooo crazy.
 	for (auto& p : list) {
+		kt::math::Bezier3f&		c(p.mCurve);
+
+		const auto				mid = glm::mix(c.mP0, c.mP3, 0.5f);
+		const float				d1 = glm::distance(c.mP0, mid),
+								d2 = glm::distance(c.mP3, mid);
+		const float				d = (d1 <= d2 ? d1 : d2) * 0.2f;
+		c.mP1 = glm::mix(c.mP0, mid, 0.75f) + nextOffset(d);
+		c.mP2 = glm::mix(c.mP3, mid, 0.75f) + nextOffset(d);
+	}
+}
+
+void RandomGenerator::onUpdateAnywhere(const GeneratorParams &gp, ParticleList &list) {
+	for (auto& p : list) {
+		kt::math::Bezier3f&		c(p.mCurve);
+
 		// Continue from the previous end point
-		p.mCurve.mP0 = p.mCurve.mP3;
-		p.mCurve.mP3 = nextPt(gp.mWorldBounds);
-		// Randomize the control points, but don't let it get toooo crazy
-		p.mCurve.mP1 = glm::mix(p.mCurve.mP0, nextPt(gp.mWorldBounds), 0.25f);
-		p.mCurve.mP2 = glm::mix(p.mCurve.mP3, nextPt(gp.mWorldBounds), 0.25f);
+		c.mP0 = c.mP3;
+		c.mP3 = nextPt(gp.mWorldBounds);
+	}
+}
+
+void RandomGenerator::onUpdateClosest(const GeneratorParams &gp, ParticleList &list) {
+	if (list.empty()) return;
+	mClosestPts.resize(list.size());
+
+	for (auto& p : mClosestPts) {
+		p = nextPt(gp.mWorldBounds);
+	}
+
+	// Each point picks its closest, eliminating as it goes. Not the best possible
+	// results, but hopefully decent for a reasonable performance trade off.
+	for (auto& p : list) {
+		kt::math::Bezier3f&		c(p.mCurve);
+
+		// Continue from the previous end point
+		c.mP0 = c.mP3;
+		c.mP3 = popClosest(c.mP0, mClosestPts);
 	}
 }
 
@@ -62,6 +100,35 @@ glm::vec3 RandomGenerator::nextPt(const kt::math::Cube &cube) {
 									mRand.nextFloat(),
 									mRand.nextFloat());
 	return cube.atUnit(unit);
+}
+
+glm::vec3 RandomGenerator::nextOffset(const float scale) {
+	glm::vec3	pt = glm::vec3(	mRand.nextFloat(),
+									mRand.nextFloat(),
+									mRand.nextFloat());
+	pt = glm::normalize(pt);
+	pt *= scale;
+	return pt;
+}
+
+glm::vec3 RandomGenerator::popClosest(const glm::vec3 &pt, PtList &list) const {
+	if (list.empty()) return pt;
+	size_t			idx = 0, k = 0;
+	float			dist = kt::math::distanceSquared(pt, list.front());
+	for (const auto& b : list) {
+		const float	d = kt::math::distanceSquared(pt, b);
+		if (d < dist) {
+			dist = d;
+			idx = k;
+		}
+		++k;
+	}
+	const glm::vec3	ans = list[idx];
+	if (list.size() > 1 && idx < list.size()-1) {
+		list[idx] = list.back();
+	}
+	list.pop_back();
+	return ans;
 }
 
 /**
@@ -140,7 +207,7 @@ glm::vec3 RandomLineGenerator::nextPt(const kt::math::Cube &cube) {
  * @class cs::ImageGenerator
  */
 void ImageGenerator::onUpdate(const GeneratorParams &gp, ParticleList &l) {
-	l.mDuration = 6.0;
+	l.mDuration = 4.0;
 	ci::Surface8u		s(ci::loadImage(kt::env::expand("$(DATA)/images/Eagle 1.jpg")));
 
 	const int			total_src_size  = s.getWidth() * s.getHeight();

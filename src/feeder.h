@@ -1,5 +1,5 @@
-#ifndef CS_GENERATE_H_
-#define CS_GENERATE_H_
+#ifndef CS_FEEDER_H_
+#define CS_FEEDER_H_
 
 #include "kt/async/worker_thread.h"
 #include "generator.h"
@@ -8,15 +8,16 @@ namespace cs {
 class Settings;
 
 /**
- * @class cs::Generate
+ * @class cs::Feeder
  * @brief Manage the generation process.
- * @description I manage the parts that actually generate the new curve values.
+ * @description I manage the parts that actually generate new particle paths, feeding
+ * that info to the render.
  */
-class Generate {
+class Feeder {
 public:
-	Generate() = delete;
-	Generate(const Generate&) = delete;
-	Generate(const kt::Cns&, const cs::Settings&);
+	Feeder() = delete;
+	Feeder(const Feeder&) = delete;
+	Feeder(const kt::Cns&, const cs::Settings&);
 
 	void					start(const ParticleList&);
 	void					update();

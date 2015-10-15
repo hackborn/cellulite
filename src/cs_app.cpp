@@ -8,8 +8,8 @@ namespace cs {
 
 BasicApp::BasicApp()
 		: mPicker(mCamera)
-		, mGenerate(mCns, mSettings)
-		, mParticleRender(mCns, mSettings, mGenerate, mParticles) {
+		, mFeeder(mCns, mSettings)
+		, mParticleRender(mCns, mSettings, mFeeder, mParticles) {
 	
 	// SETUP PICKER
 	const glm::vec2		window_size(static_cast<float>(getWindowWidth()), static_cast<float>(getWindowHeight()));
@@ -39,27 +39,29 @@ BasicApp::BasicApp()
 
 	// SETUP PARTICLES
 	GeneratorParams			gen_params(mCns);
-	RandomGenerator			gen;
+	RandomGenerator			gen(RandomGenerator::Mode::kAnywhere);
 	mParticles.resize(mSettings.mParticleCount);
 	gen.update(gen_params, mParticles);
 	for (auto& p : mParticles) {
 		p.mCurve.mP0 = p.mCurve.mP3;
 	}
 
-	mGenerate.start(mParticles);
+	mFeeder.start(mParticles);
 }
 
 void BasicApp::prepareSettings(Settings* s) {
 	if (s) {
 //		s->setTitle("C. Clara Run");
 		s->setWindowSize(glm::ivec2(1920, 1080));
-//		s->setFullScreen(true);
+		s->setFullScreen(true);
 //		s->setConsoleWindowEnabled(true);
 	}
 }
 
 void BasicApp::setup() {
 	base::setup();
+	// Printing during construction creates an error, so clear that out, in case anyone did.
+	std::cout.clear();
 }
 
 void BasicApp::mouseDrag(ci::app::MouseEvent event ) {
@@ -80,7 +82,7 @@ void BasicApp::keyDown(ci::app::KeyEvent event ) {
 }
 
 void BasicApp::onUpdate() {
-	mGenerate.update();
+	mFeeder.update();
 	mParticleRender.update();
 }
 

@@ -9,7 +9,7 @@
 
 namespace kt { class Cns; }
 namespace cs {
-class Generate;
+class Feeder;
 class Settings;
 
 /**
@@ -20,7 +20,7 @@ class ParticleRender {
 public:
 	ParticleRender() = delete;
 	ParticleRender(const ParticleRender&) = delete;
-	ParticleRender(const kt::Cns&, const cs::Settings&, Generate&, ParticleList&);
+	ParticleRender(const kt::Cns&, const cs::Settings&, Feeder&, ParticleList&);
 
 	void						update();
 	void						draw();
@@ -30,7 +30,7 @@ private:
 
 	const kt::Cns&				mCns;
 	const cs::Settings&			mSettings;
-	class Generate&				mGenerate;
+	class Feeder&				mFeeder;
 	Noise						mNoise;
 	ParticleList&				mParticles;
 	kt::time::Seconds			mTimer;
