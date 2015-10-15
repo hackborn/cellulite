@@ -15,8 +15,8 @@ void main( void )
 //	oColor = texture( uTex0, TexCoord.st ) * Color * diffuse;
 //	oColor = Color;
 
-//	oColor = texture( uTex0, TexCoord.st ) * Color;
-	oColor = texture( uTex0, TexCoord.st );
+	oColor = texture( uTex0, TexCoord.st ) * Color;
+//	oColor = texture( uTex0, TexCoord.st );
 oColor[0] = 1;
 oColor[1] = 1;
 oColor[2] = 1;

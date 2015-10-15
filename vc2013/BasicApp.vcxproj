@@ -286,9 +286,9 @@ xcopy /y "..\..\..\lib\msw\x86\d3dcompiler_46.dll" "$(OutDir)"</Command>
     <ClCompile Include="..\src\kt\app\kt_string.cpp" />
     <ClCompile Include="..\src\kt\math\bezier.cpp" />
     <ClCompile Include="..\src\kt\math\geometry.cpp" />
+    <ClCompile Include="..\src\kt\math\range.cpp" />
     <ClCompile Include="..\src\kt\time\seconds.cpp" />
     <ClCompile Include="..\src\noise.cpp" />
-    <ClCompile Include="..\src\particle.cpp" />
     <ClCompile Include="..\src\particle_render.cpp" />
     <ClCompile Include="..\src\picker_3d.cpp" />
   </ItemGroup>
@@ -304,6 +304,7 @@ xcopy /y "..\..\..\lib\msw\x86\d3dcompiler_46.dll" "$(OutDir)"</Command>
     <ClInclude Include="..\src\kt\async\worker_thread.h" />
     <ClInclude Include="..\src\kt\math\bezier.h" />
     <ClInclude Include="..\src\kt\math\geometry.h" />
+    <ClInclude Include="..\src\kt\math\range.h" />
     <ClInclude Include="..\src\kt\time\seconds.h" />
     <ClInclude Include="..\src\noise.h" />
     <ClInclude Include="..\src\particle.h" />

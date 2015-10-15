@@ -35,7 +35,7 @@ BasicApp::BasicApp()
 	mBatch = ci::gl::Batch::create(mesh, glsl);
 
 	// SETUP METRICS
-	setupWorldBounds(mSettings.mNearZ, mSettings.mFarZ, mCns);
+	setupWorldBounds(mSettings.mRangeZ, mCns);
 
 	// SETUP PARTICLES
 	mParticles.resize(mSettings.mParticleCount);
@@ -43,6 +43,7 @@ BasicApp::BasicApp()
 	gen.update(GeneratorParams(mCns), mParticles);
 	for (auto& p : mParticles) {
 		p.mPosition = p.mCurve.mP0 = p.mCurve.mP3;
+		p.mAlpha = p.mStartAlpha = p.mEndAlpha = 1.0f;
 	}
 
 	mFeeder.start(mParticles);
@@ -52,7 +53,7 @@ void BasicApp::prepareSettings(Settings* s) {
 	if (s) {
 //		s->setTitle("C. Clara Run");
 		s->setWindowSize(glm::ivec2(1920, 1080));
-		s->setFullScreen(true);
+//		s->setFullScreen(true);
 //		s->setConsoleWindowEnabled(true);
 	}
 }
@@ -105,7 +106,9 @@ void BasicApp::onDraw() {
 	mFbo->unbindTexture();
 }
 
-void BasicApp::setupWorldBounds(const float near_z, const float far_z, kt::Cns &cns) const {
+void BasicApp::setupWorldBounds(const kt::math::Rangef &rz, kt::Cns &cns) const {
+	const float				near_z = rz.mMax,
+							far_z = rz.mMin;
 	const glm::ivec2		screen_ll(0, getWindowHeight()),
 							screen_ur(getWindowWidth(), 0);
 	kt::math::Cube&			cube(cns.mExactWorldBounds);

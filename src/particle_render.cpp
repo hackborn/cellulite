@@ -31,6 +31,9 @@ ParticleRender::ParticleRender(const kt::Cns &cns, const cs::Settings &settings,
 		, mSettings(settings)
 		, mFeeder(f)
 		, mParticles(p) {
+	// Setup
+	mAccentForces.fill(128);
+
 	// Load the texture
 	mTexture = make_texture(cns);
 	if (!mTexture) throw std::runtime_error("ParticleRender vbo can't create texture");
@@ -68,6 +71,8 @@ ParticleRender::ParticleRender(const kt::Cns &cns, const cs::Settings &settings,
 }
 
 void ParticleRender::update() {
+	updateAccents();
+
 	// Hold
 	if (mStage == Stage::kHold) {
 		if (mTimer.elapsed() >= mHoldDuration) {
@@ -88,6 +93,14 @@ void ParticleRender::update() {
 			const float		t = static_cast<float>(kt::math::s_curved(mTimer.elapsed() / mTransitionDuration));
 			for (auto& p : mParticles) {
 				p.mPosition = p.mCurve.point(t);
+				p.mAlpha = glm::mix(p.mStartAlpha, p.mEndAlpha, t);
+
+				// Blur out a little based on distance
+				p.mAlpha *= mSettings.mRangeZ.convert(p.mPosition.z, kt::math::Rangef(0.1f, 1.0f));
+
+				if (p.mHasAccents && mAccentParticles.size() < mSettings.mAccentParticleCount) {
+					mAccentParticles.push_back(Particle(p.mPosition, p.mAlpha * 0.2f));
+				}
 			}
 		}
 	}
@@ -100,7 +113,29 @@ void ParticleRender::draw() {
 	ci::gl::ScopedDepthWrite	sdw(false);
 	ci::gl::ScopedBlendAlpha	sba;
 	ci::gl::color(1.0f, 1.0f, 1.0f, 1.0f);
+
 	drawParticles(mParticles);
+	drawParticles(mAccentParticles);
+}
+
+void ParticleRender::updateAccents() {
+	// Accents always fall down and fade out, with a little random forces thrown in.
+
+	for (auto& p : mAccentParticles) {
+		p.mAlpha -= 0.001f;
+		if (p.mAlpha <= 0.0f) {
+			std::swap(p, mAccentParticles.back());
+		} else {
+			p.mPosition.y += 0.04f;
+			// Apply forces.
+			glm::vec3		unit = mCns.mWorldBounds.toUnit(p.mPosition);
+			glm::vec3		force = mAccentForces.at(unit);
+			p.mPosition += (force * 0.00000000015f);
+		}
+	}
+	while (!mAccentParticles.empty() && mAccentParticles.back().mAlpha <= 0.0f) {
+		mAccentParticles.pop_back();
+	}
 }
 
 void ParticleRender::drawParticles(const ParticleList &particles) {
@@ -124,7 +159,7 @@ void ParticleRender::drawParticles(size_t start, size_t end, const ParticleList 
 		data->x = p.mPosition.x;
 		data->y = p.mPosition.y;
 		data->z = p.mPosition.z;
-		data->w = p.mColor;
+		data->w = p.mAlpha;
 		*data++;
 	}
 	mInstanceDataVbo->unmap();

@@ -58,6 +58,9 @@ void Feeder::getFrame(ParticleList &out) {
 	while (src < src_end) {
 		src->mCurve.mP0 = dst->mPosition;
 		dst->mCurve = src->mCurve;
+		dst->mStartAlpha = src->mStartAlpha;
+		dst->mEndAlpha = src->mEndAlpha;
+		dst->mHasAccents = src->mHasAccents;
 
 		++src;
 		++dst;

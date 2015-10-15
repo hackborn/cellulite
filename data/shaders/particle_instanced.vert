@@ -22,14 +22,16 @@ void main( void )
 	// guess so -- but mostly because I don't know how to get custom per-instance
 	// data of anything larger than a vec4.
 	vec3			inst_pos = vec3(vInstancePosition[0], vInstancePosition[1], vInstancePosition[2]);
-	int				e_clr = int(vInstancePosition[3]);
-	vec3			inst_clr = vec3(float((e_clr>>16)&0xff) / 255.0,
-									float((e_clr>>8)&0xff) / 255.0,
-									float(e_clr&0xff) / 255.0);
+//	int				e_clr = int(vInstancePosition[3]);
+//	vec3			inst_clr = vec3(float((e_clr>>16)&0xff) / 255.0,
+//									float((e_clr>>8)&0xff) / 255.0,
+//									float(e_clr&0xff) / 255.0);
 
 	gl_Position	= ciModelViewProjection * ( ciPosition + vec4( inst_pos, 0 ) );
 //	Color 		= ciColor * vec4(inst_clr, 1);
-	Color 		= vec4(1, 1, 1, 1);
+//	Color 		= vec4(1, 1, 1, 1);
+//	Color 		= ciColor;
+	Color 		= ciColor * vec4(1, 1, 1, vInstancePosition[3]);
 	TexCoord	= ciTexCoord0;
 	Normal		= ciNormalMatrix * ciNormal;
 }

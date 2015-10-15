@@ -7,6 +7,10 @@
 
 namespace cs {
 
+namespace { 
+const float			WHITE = 1.0f;
+}
+
 /**
  * @class cs::GeneratorParams
  */
@@ -26,6 +30,13 @@ void Generator::update(const GeneratorParams &p, ParticleList &list) {
 
 	onUpdate(p, list);
 
+	// Assign 20 random accent generators.
+	for (auto& p : list) p.mHasAccents = false;
+	for (size_t k=0; k<20; ++k) {
+		size_t		idx = mRand.nextUint(list.size()-1);
+		list[idx].mHasAccents = true;
+	}
+
 	// Compute all the curve length
 	// XXX This was supposed to tell me how long I should run the animation for, but
 	// it did not in fact deliver any actionable information
@@ -44,6 +55,13 @@ void Generator::update(const GeneratorParams &p, ParticleList &list) {
 #endif
 }
 
+glm::vec3 Generator::nextPt(const kt::math::Cube &cube) {
+	glm::vec3	unit = glm::vec3(	mRand.nextFloat(),
+									mRand.nextFloat(),
+									mRand.nextFloat());
+	return cube.atUnit(unit);
+}
+
 /**
  * @class cs::RandomGenerator
  */
@@ -56,6 +74,11 @@ void RandomGenerator::onUpdate(const GeneratorParams &gp, ParticleList &list) {
 
 	// Randomize the control points, but don't let it get toooo crazy.
 	for (auto& p : list) {
+		// Alpha
+		p.mStartAlpha = p.mEndAlpha;
+		p.mEndAlpha = 1.0f;		
+
+		// Curve
 		kt::math::Bezier3f&		c(p.mCurve);
 
 		const auto				mid = glm::mix(c.mP0, c.mP3, 0.5f);
@@ -94,13 +117,6 @@ void RandomGenerator::onUpdateClosest(const GeneratorParams &gp, ParticleList &l
 		c.mP0 = c.mP3;
 		c.mP3 = popClosest(c.mP0, mClosestPts);
 	}
-}
-
-glm::vec3 RandomGenerator::nextPt(const kt::math::Cube &cube) {
-	glm::vec3	unit = glm::vec3(	mRand.nextFloat(),
-									mRand.nextFloat(),
-									mRand.nextFloat());
-	return cube.atUnit(unit);
 }
 
 glm::vec3 RandomGenerator::nextOffset(const float scale) {
@@ -151,14 +167,20 @@ void PolyLineGenerator::onUpdate(const GeneratorParams &gp, ParticleList &l) {
 	}
 
 	for (auto& p : l) {
-		glm::vec3		closest_pt;
-		// Continue from the previous end point
-		const float		d = kt::math::distance_seg(p.mCurve.mP3, mLines, &closest_pt);
-		p.mCurve.mP0 = p.mCurve.mP3;
-		p.mCurve.mP3 = closest_pt;
+		// Alpha
+		p.mStartAlpha = p.mEndAlpha;
+		p.mEndAlpha = 1.0f;		
 
-		p.mCurve.mP1 = glm::vec3(0, 0, -5);
-		p.mCurve.mP2 = glm::vec3(0, 0, -5);
+		// Curve
+		kt::math::Bezier3f&		c(p.mCurve);
+		glm::vec3				closest_pt;
+		// Continue from the previous end point
+		const float				d = kt::math::distance_seg(c.mP3, mLines, &closest_pt);
+		c.mP0 = p.mCurve.mP3;
+		c.mP3 = closest_pt;
+
+		c.mP1 = glm::vec3(0, 0, -5);
+		c.mP2 = glm::vec3(0, 0, -5);
 	}
 }
 
@@ -169,14 +191,20 @@ void RandomLineGenerator::onUpdate(const GeneratorParams &gp, ParticleList &l) {
 	nextLines(gp.mWorldBounds);
 
 	for (auto& p : l) {
-		glm::vec3		closest_pt;
-		// Continue from the previous end point
-		const float		d = kt::math::distance_seg(p.mCurve.mP3, mLines, &closest_pt);
-		p.mCurve.mP0 = p.mCurve.mP3;
-		p.mCurve.mP3 = closest_pt;
+		// Alpha
+		p.mStartAlpha = p.mEndAlpha;
+		p.mEndAlpha = 1.0f;		
 
-		p.mCurve.mP1 = glm::vec3(0, 0, -5);
-		p.mCurve.mP2 = glm::vec3(0, 0, -5);
+		// Curve
+		kt::math::Bezier3f&		c(p.mCurve);
+		glm::vec3				closest_pt;
+		// Continue from the previous end point
+		const float				d = kt::math::distance_seg(c.mP3, mLines, &closest_pt);
+		c.mP0 = p.mCurve.mP3;
+		c.mP3 = closest_pt;
+
+		c.mP1 = glm::vec3(0, 0, -5);
+		c.mP2 = glm::vec3(0, 0, -5);
 	}
 }
 
@@ -195,13 +223,6 @@ void RandomLineGenerator::nextLines(const kt::math::Cube &cube) {
 		}
 		mLines.push_back(poly);
 	}
-}
-
-glm::vec3 RandomLineGenerator::nextPt(const kt::math::Cube &cube) {
-	glm::vec3	unit = glm::vec3(	mRand.nextFloat(),
-									mRand.nextFloat(),
-									mRand.nextFloat());
-	return cube.atUnit(unit);
 }
 
 /**
@@ -225,27 +246,37 @@ void ImageGenerator::onUpdate(const GeneratorParams &gp, ParticleList &l) {
 
 	int32_t				y = 0, x = 0;
 	for (auto& p : l) {
+		// Alpha
+		p.mStartAlpha = p.mEndAlpha;
+		p.mEndAlpha = 1.0f;		
+
+		// Curve
 		// Get coords
-		glm::vec2		fpt(static_cast<float>(x) / (static_cast<float>(cols-1)),
-							static_cast<float>(y) / (static_cast<float>(rows-1)));
-		glm::ivec2		src_pt(static_cast<int32_t>(fpt.x*src_w), static_cast<int32_t>(fpt.y*src_h));
+		glm::vec2				fpt(static_cast<float>(x) / (static_cast<float>(cols-1)),
+									static_cast<float>(y) / (static_cast<float>(rows-1)));
+		glm::ivec2				src_pt(static_cast<int32_t>(fpt.x*src_w), static_cast<int32_t>(fpt.y*src_h));
 		if (src_pt.x < 0) src_pt.x = 0;
 		else if (src_pt.x >= s.getWidth()) src_pt.x = s.getWidth()-1;
 		if (src_pt.y < 0) src_pt.y = 0;
 		else if (src_pt.y >= s.getHeight()) src_pt.y = s.getHeight()-1;
 
 		// Src value
-		const auto		clr = s.getPixel(src_pt);
-		const float		v = 1.0f - (static_cast<float>(clr.r + clr.g + clr.b) / (255.0f * 3.0f));
+		const auto				clr = s.getPixel(src_pt);
+		const float				v = 1.0f - (static_cast<float>(clr.r + clr.g + clr.b) / (255.0f * 3.0f));
 
-		glm::vec3		pt = gp.mExactWorldBounds.atUnit(glm::vec3(fpt.x, fpt.y, v));
+		glm::vec3				pt = gp.mExactWorldBounds.atUnit(glm::vec3(fpt.x, fpt.y, v));
 
 		// Continue from the previous end point
-		p.mCurve.mP0 = p.mCurve.mP3;
-		p.mCurve.mP3 = pt;
+		kt::math::Bezier3f&		c(p.mCurve);
+		c.mP0 = p.mCurve.mP3;
+		c.mP3 = pt;
 
-		p.mCurve.mP1 = glm::vec3(0, 0, -5);
-		p.mCurve.mP2 = glm::vec3(0, 0, -5);
+		c.mP1 = glm::vec3(0, 0, -5);
+		c.mP2 = glm::vec3(0, 0, -5);
+
+		// Blur things out a little on the blue, because why not, even though you
+		// really can't tell.
+		p.mEndAlpha = glm::mix(0.1f, 1.0f, static_cast<float>(clr.b)/255.0f);
 
 		if (++x >= cols) {
 			x = 0;

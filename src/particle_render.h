@@ -26,6 +26,7 @@ public:
 	void						draw();
 
 private:
+	void						updateAccents();
 	void						drawParticles(const ParticleList&);
 	void						drawParticles(size_t start, size_t end, const ParticleList&);
 
@@ -34,6 +35,8 @@ private:
 	class Feeder&				mFeeder;
 	Noise						mNoise;
 	ParticleList&				mParticles;
+	ParticleList				mAccentParticles;
+	cs::InterpCube				mAccentForces;
 	kt::time::Seconds			mTimer;
 	enum class Stage			{ kTransition, kHold };
 	Stage						mStage = Stage::kHold;

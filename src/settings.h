@@ -1,6 +1,8 @@
 #ifndef CS_SETTINGS_H_
 #define CS_SETTINGS_H_
 
+#include "kt/math/range.h"
+
 namespace cs {
 
 /**
@@ -13,14 +15,15 @@ class Settings {
 public:
 	Settings() { }
 
-	// Total number of particles
+	// Total number of main particles
 	size_t				mParticleCount = 2000;
 //	size_t				mParticleCount = 10;
 //	size_t				mParticleCount = 1;
+	// Total number of accent particles
+	size_t				mAccentParticleCount = 4000;
 
-	// The near and far z planes that enclose the particles.
-	float				mNearZ = 0.0f,
-						mFarZ = -80.0f;
+	// The far and near z planes that enclose the particles.
+	kt::math::Rangef	mRangeZ = kt::math::Rangef(-80.0f, 0.0f);
 
 	// Amount of deceleration (per frame; should be per second)
 	float				mFriction = 0.9f;

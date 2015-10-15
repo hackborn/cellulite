@@ -40,7 +40,12 @@ public:
 protected:
 	virtual void		onUpdate(const GeneratorParams&, ParticleList&) = 0;
 
+	// Random utility -- answer a random point somewhere in the cube.
+	glm::vec3			nextPt(const kt::math::Cube&);
+
 	Generator() { }
+
+	cinder::Rand		mRand;
 };
 
 /**
@@ -59,12 +64,10 @@ private:
 	void				onUpdateClosest(const GeneratorParams&, ParticleList&);
 
 	using PtList = std::vector<glm::vec3>;
-	glm::vec3			nextPt(const kt::math::Cube&);
 	glm::vec3			nextOffset(const float scale);
 	glm::vec3			popClosest(const glm::vec3&, PtList&) const;
 
 	const Mode			mMode;
-	cinder::Rand		mRand;
 	PtList				mClosestPts;
 };
 
@@ -82,7 +85,6 @@ public:
 private:
 	std::vector<ci::PolyLine3f> mLines;
 	ci::PolyLine3f		mLine;
-	cinder::Rand		mRand;
 };
 
 /**
@@ -97,10 +99,8 @@ public:
 
 private:
 	void				nextLines(const kt::math::Cube&);
-	glm::vec3			nextPt(const kt::math::Cube&);
 
 	std::vector<ci::PolyLine3f> mLines;
-	cinder::Rand		mRand;
 };
 
 

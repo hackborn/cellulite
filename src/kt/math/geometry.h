@@ -32,13 +32,26 @@ float								distance_seg(const glm::vec3 &pt, const ci::PolyLine3f&, glm::vec3*
 float								distance_seg(const glm::vec3 &pt, const std::vector<ci::PolyLine3f>&, glm::vec3* out_pt = nullptr);
 
 /**
- * @func			s_curve()
+ * @func s_curve()
  * @brief Transform a 0-1 value to an s shape.
  */
 template <typename T>
 T					s_curve(const T v) { return (3.0f-2.0f*v)*v*v; }
 auto const s_curvef = &s_curve<float>;
 auto const s_curved = &s_curve<double>;
+
+/**
+ * @func linear_at()
+ * @brief Linear interpolation. Index is 0-1.
+ */
+float				linear_at(const float index, const std::vector<float>&);
+
+/**
+ * @func hermite_at()
+ * @brief Hermite interpolation. Index is 0-1.
+ * Note that hermite interpolation requires 4 or more values in the vector.
+ */
+float				hermite_at(const float index, const std::vector<float>&);
 
 /**
  * @class kt::Cube
@@ -50,6 +63,8 @@ public:
 
 	// Given a unit position (all values 0-1) translate to a position in the cube.
 	glm::vec3					atUnit(const glm::vec3&) const;
+	// Given a point somewhere in my bounds, answer a unit point.
+	glm::vec3					toUnit(glm::vec3&) const;
 
 	// Four corners.
 	glm::vec3					mNearLL, mNearUR,

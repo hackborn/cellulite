@@ -42,9 +42,6 @@
     <ClCompile Include="..\src\picker_3d.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\particle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClInclude Include="..\src\settings.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -83,6 +80,9 @@
     </ClInclude>
     <ClInclude Include="..\src\feeder.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\kt\math\range.h">
+      <Filter>Source Files\kt\math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -134,6 +134,9 @@
     </ClCompile>
     <ClCompile Include="..\src\feeder.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\kt\math\range.cpp">
+      <Filter>Source Files\kt\math</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
