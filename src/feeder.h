@@ -48,10 +48,12 @@ private:
 	bool					mHasFrame = false;
 	ParticleList			mFrame;
 	GeneratorParams			mParams;
-	GeneratorRef			mRndGenerator;
-	GeneratorRef			mLineGenerator;
-	GeneratorRef			mImageGenerator;
-	GeneratorRef			mCurrentGenerator;
+	std::vector<GeneratorRef> mGeneratorList;
+	size_t					mCurrentGenerator = 0;
+//	GeneratorRef			mRndGenerator;
+//	GeneratorRef			mLineGenerator;
+//	GeneratorRef			mImageGenerator;
+//	GeneratorRef			mCurrentGenerator;
 	kt::async::OperatorThread<Op, int>	mWorker;
 };
 

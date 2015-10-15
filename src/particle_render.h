@@ -26,7 +26,8 @@ public:
 	void						draw();
 
 private:
-	void						drawParticles(size_t start, size_t end);
+	void						drawParticles(const ParticleList&);
+	void						drawParticles(size_t start, size_t end, const ParticleList&);
 
 	const kt::Cns&				mCns;
 	const cs::Settings&			mSettings;

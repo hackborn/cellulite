@@ -5,6 +5,12 @@
 
 namespace cs {
 
+namespace {
+void			add_gen(GeneratorRef g, std::vector<GeneratorRef> &out) {
+	if (g) out.push_back(g);
+}
+}
+
 /**
  * @class cs::Feeder
  */
@@ -12,9 +18,11 @@ Feeder::Feeder(const kt::Cns &cns, const cs::Settings &s)
 		: mCns(cns)
 		, mSettings(s)
 		, mWorker([this](Op &op){handle(op);}) {
-	mRndGenerator.reset(new RandomGenerator());
-	mLineGenerator.reset(new RandomLineGenerator());
-	mImageGenerator.reset(new ImageGenerator());
+	add_gen(GeneratorRef(new RandomLineGenerator()), mGeneratorList);
+	add_gen(GeneratorRef(new RandomGenerator()), mGeneratorList);
+	add_gen(GeneratorRef(new ImageGenerator()), mGeneratorList);
+	add_gen(GeneratorRef(new RandomGenerator()), mGeneratorList);
+	mCurrentGenerator = mGeneratorList.size();
 }
 
 void Feeder::start(const ParticleList &list) {
@@ -66,14 +74,11 @@ void Feeder::getFrame(ParticleList &out) {
 }
 
 GeneratorRef Feeder::nextGenerator() {
-	if (mCurrentGenerator == mLineGenerator) {
-		mCurrentGenerator = mRndGenerator;
-	} else if (mCurrentGenerator == mRndGenerator) {
-		mCurrentGenerator = mImageGenerator;
-	} else {
-		mCurrentGenerator = mLineGenerator;
-	}
-	return mCurrentGenerator;
+	if (mGeneratorList.empty()) return nullptr;
+
+	++mCurrentGenerator;
+	if (mCurrentGenerator >= mGeneratorList.size()) mCurrentGenerator = 0;
+	return mGeneratorList[mCurrentGenerator];
 }
 
 /**

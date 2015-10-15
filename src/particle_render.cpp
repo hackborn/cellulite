@@ -100,23 +100,27 @@ void ParticleRender::draw() {
 	ci::gl::ScopedDepthWrite	sdw(false);
 	ci::gl::ScopedBlendAlpha	sba;
 	ci::gl::color(1.0f, 1.0f, 1.0f, 1.0f);
-	size_t						k = 0, size = mParticles.size();
+	drawParticles(mParticles);
+}
+
+void ParticleRender::drawParticles(const ParticleList &particles) {
+	size_t						k = 0, size = particles.size();
 	while (size >= BUFFER_SIZE) {
-		drawParticles(k, k + BUFFER_SIZE);
+		drawParticles(k, k + BUFFER_SIZE, particles);
 		k += BUFFER_SIZE;
 		size -= BUFFER_SIZE;
 	}
-	drawParticles(k, mParticles.size());
+	drawParticles(k, particles.size(), particles);
 }
 
-void ParticleRender::drawParticles(size_t start, size_t end) {
-	if (start >= mParticles.size()) return;
-	if (end > mParticles.size()) end = mParticles.size();
+void ParticleRender::drawParticles(size_t start, size_t end, const ParticleList &particles) {
+	if (start >= particles.size()) return;
+	if (end > particles.size()) end = particles.size();
 
 	// update our instance positions; map our instance data VBO, write new positions, unmap
 	glm::vec4 *data = (glm::vec4*)mInstanceDataVbo->mapReplace();
 	for (size_t k=start; k<end; ++k) {
-		const Particle&			p(mParticles[k]);
+		const Particle&			p(particles[k]);
 		data->x = p.mPosition.x;
 		data->y = p.mPosition.y;
 		data->z = p.mPosition.z;
