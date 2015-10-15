@@ -38,7 +38,6 @@ private:
 	Stage						mStage = Stage::kHold;
 	double						mTransitionDuration = 0.0,
 								mHoldDuration = 0.0;
-	bool						mHasFrame = false;
 
 	const size_t				BUFFER_SIZE = 2000;
 	ci::gl::VboRef				mInstanceDataVbo;

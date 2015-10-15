@@ -73,7 +73,6 @@ void ParticleRender::update() {
 		if (mTimer.elapsed() >= mHoldDuration) {
 			if (mFeeder.hasFrame()) {
 				mFeeder.getFrame(mParticles);
-//				mHasFrame = true;
 				mTransitionDuration = mParticles.mTransitionDuration;
 				mHoldDuration = mParticles.mHoldDuration;
 				mStage = Stage::kTransition;
@@ -92,23 +91,6 @@ void ParticleRender::update() {
 			}
 		}
 	}
-#if 0
-	if (mTimer.elapsed() >= mTransitionDuration) {
-		if (mFeeder.hasFrame()) {
-			mFeeder.getFrame(mParticles);
-			mHasFrame = true;
-			mTimer.start();
-			mTransitionDuration = mParticles.mTransitionDuration;
-			mHoldDuration = mParticles.mHoldDuration;
-		}
-	}
-
-	const float		t = (mHasFrame ? static_cast<float>(kt::math::s_curved(mTimer.elapsed() / mDuration)) : 0.0f);
-	for (auto& p : mParticles) {
-		p.mPosition = p.mCurve.point(t);
-		
-	}
-#endif
 }
 
 void ParticleRender::draw() {
