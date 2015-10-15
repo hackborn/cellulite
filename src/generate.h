@@ -4,7 +4,6 @@
 #include "kt/async/worker_thread.h"
 #include "generator.h"
 
-namespace kt { class Cns; }
 namespace cs {
 class Settings;
 
@@ -38,8 +37,7 @@ private:
 		bool				replace(Op&, int&) { return false; }
 		void				run(int&);
 
-		kt::math::Cube		mWorldBounds;
-		// Handle generating the new values
+		GeneratorParams		mParams;
 		GeneratorRef		mGenerator;
 		ParticleList		mParticles;
 	};
@@ -48,8 +46,10 @@ private:
 	const cs::Settings&		mSettings;
 	bool					mHasFrame = false;
 	ParticleList			mFrame;
+	GeneratorParams			mParams;
 	GeneratorRef			mRndGenerator;
 	GeneratorRef			mLineGenerator;
+	GeneratorRef			mImageGenerator;
 	GeneratorRef			mCurrentGenerator;
 	kt::async::OperatorThread<Op, int>	mWorker;
 };

@@ -14,11 +14,14 @@ Generate::Generate(const kt::Cns &cns, const cs::Settings &s)
 		, mWorker([this](Op &op){handle(op);}) {
 	mRndGenerator.reset(new RandomGenerator());
 	mLineGenerator.reset(new RandomLineGenerator());
+	mImageGenerator.reset(new ImageGenerator());
 }
 
 void Generate::start(const ParticleList &list) {
+	mParams.setTo(mCns);
+
 	mWorker.run([this, &list](Op &op) {
-		op.mWorldBounds = mCns.mWorldBounds;
+		op.mParams = mParams;
 		op.mGenerator = nextGenerator();
 		op.mParticles = list;
 	});
@@ -60,7 +63,7 @@ void Generate::getFrame(ParticleList &out) {
 	// Generate the next frame
 	mHasFrame = false;
 	mWorker.run([this](Op &op) {
-		op.mWorldBounds = mCns.mWorldBounds;
+		op.mParams = mParams;
 		op.mGenerator = nextGenerator();
 		op.mParticles.swap(mFrame);
 	});
@@ -69,6 +72,8 @@ void Generate::getFrame(ParticleList &out) {
 GeneratorRef Generate::nextGenerator() {
 	if (mCurrentGenerator == mLineGenerator) {
 		mCurrentGenerator = mRndGenerator;
+	} else if (mCurrentGenerator == mRndGenerator) {
+		mCurrentGenerator = mImageGenerator;
 	} else {
 		mCurrentGenerator = mLineGenerator;
 	}
@@ -84,7 +89,7 @@ Generate::Op::Op() {
 void Generate::Op::run(int&) {
 	if (!mGenerator) return;
 
-	mGenerator->update(mWorldBounds, mParticles);
+	mGenerator->update(mParams, mParticles);
 }
 
 } // namespace cs

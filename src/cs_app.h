@@ -30,7 +30,7 @@ protected:
 	void						onDraw() override;
 
 private:
-	void						setupWorldBounds(const float near_z, const float far_z, kt::math::Cube&) const;
+	void						setupWorldBounds(const float near_z, const float far_z, kt::Cns&) const;
 
 	using base = kt::App;
 

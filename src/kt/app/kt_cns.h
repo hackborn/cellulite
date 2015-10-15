@@ -23,8 +23,10 @@ public:
 	// Size of a single particle (which, at 1,1, is the same size as a cell).
 	glm::vec2			mParticleSize = glm::vec2(1, 1);
 
-	// The visible world bounds.
+	// The visible world bounds. The standard bounds extend beyond the edges,
+	// but the exact bounds fit the screen exactly.
 	kt::math::Cube		mWorldBounds;
+	kt::math::Cube		mExactWorldBounds;
 };
 
 } // namespace kt

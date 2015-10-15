@@ -35,12 +35,13 @@ BasicApp::BasicApp()
 	mBatch = ci::gl::Batch::create(mesh, glsl);
 
 	// SETUP METRICS
-	setupWorldBounds(0.0f, -80.0f, mCns.mWorldBounds);
+	setupWorldBounds(0.0f, -80.0f, mCns);
 
 	// SETUP PARTICLES
+	GeneratorParams			gen_params(mCns);
 	RandomGenerator			gen;
 	mParticles.resize(mSettings.mParticleCount);
-	gen.update(mCns.mWorldBounds, mParticles);
+	gen.update(gen_params, mParticles);
 	for (auto& p : mParticles) {
 		p.mCurve.mP0 = p.mCurve.mP3;
 	}
@@ -103,9 +104,10 @@ void BasicApp::onDraw() {
 	mFbo->unbindTexture();
 }
 
-void BasicApp::setupWorldBounds(const float near_z, const float far_z, kt::math::Cube &cube) const {
+void BasicApp::setupWorldBounds(const float near_z, const float far_z, kt::Cns &cns) const {
 	const glm::ivec2		screen_ll(0, getWindowHeight()),
 							screen_ur(getWindowWidth(), 0);
+	kt::math::Cube&			cube(cns.mExactWorldBounds);
 	mPicker.pick(screen_ll, near_z, cube.mNearLL);
 	mPicker.pick(screen_ur, near_z, cube.mNearUR);
 	mPicker.pick(screen_ll, far_z, cube.mFarLL);
@@ -120,10 +122,11 @@ void BasicApp::setupWorldBounds(const float near_z, const float far_z, kt::math:
 										(cube.mFarUR.y-cube.mFarLL.y) * exp_frac,
 										0.0f);
 
-	cube.mNearLL -= near_exp;
-	cube.mNearUR += near_exp;
-	cube.mFarLL -= far_exp;
-	cube.mFarUR += far_exp;
+	cns.mWorldBounds = cns.mExactWorldBounds;
+	cns.mWorldBounds.mNearLL -= near_exp;
+	cns.mWorldBounds.mNearUR += near_exp;
+	cns.mWorldBounds.mFarLL -= far_exp;
+	cns.mWorldBounds.mFarUR += far_exp;
 }
 
 } // namespace cs

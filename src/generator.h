@@ -6,9 +6,24 @@
 #include "kt/math/geometry.h"
 #include "particle_list.h"
 
+namespace kt { class Cns; }
 namespace cs {
 class Generator;
 using GeneratorRef = std::shared_ptr<Generator>;
+
+/**
+ * @class cs::GeneratorParams
+ */
+class GeneratorParams {
+public:
+	GeneratorParams() { }
+	GeneratorParams(const kt::Cns &cns) { setTo(cns); }
+
+	void				setTo(const kt::Cns&);
+
+	kt::math::Cube		mWorldBounds,
+						mExactWorldBounds;
+};
 
 /**
  * @class cs::Generator
@@ -20,10 +35,10 @@ public:
 
 	// Update the curve. Ideally, treat the curve's endpoint
 	// as the particle's current position.
-	void				update(const kt::math::Cube&, ParticleList&);
+	void				update(const GeneratorParams&, ParticleList&);
 
 protected:
-	virtual void		onUpdate(const kt::math::Cube&, ParticleList&) = 0;
+	virtual void		onUpdate(const GeneratorParams&, ParticleList&) = 0;
 
 	Generator() { }
 };
@@ -36,7 +51,7 @@ class RandomGenerator : public Generator {
 public:
 	RandomGenerator() { }
 
-	void				onUpdate(const kt::math::Cube&, ParticleList&) override;
+	void				onUpdate(const GeneratorParams&, ParticleList&) override;
 
 private:
 	glm::vec3			nextPt(const kt::math::Cube&);
@@ -53,7 +68,7 @@ public:
 	PolyLineGenerator() { }
 	PolyLineGenerator(const ci::PolyLine3f &line) : mLine(line) { }
 
-	void				onUpdate(const kt::math::Cube&, ParticleList&) override;
+	void				onUpdate(const GeneratorParams&, ParticleList&) override;
 
 private:
 	std::vector<ci::PolyLine3f> mLines;
@@ -69,7 +84,7 @@ class RandomLineGenerator : public Generator {
 public:
 	RandomLineGenerator() { }
 
-	void				onUpdate(const kt::math::Cube&, ParticleList&) override;
+	void				onUpdate(const GeneratorParams&, ParticleList&) override;
 
 private:
 	void				nextLines(const kt::math::Cube&);
@@ -77,6 +92,18 @@ private:
 
 	std::vector<ci::PolyLine3f> mLines;
 	cinder::Rand		mRand;
+};
+
+
+/**
+ * @class cs::ImageGenerator
+ * @brief Fill with attractors to an image.
+ */
+class ImageGenerator : public Generator {
+public:
+	ImageGenerator() { }
+
+	void				onUpdate(const GeneratorParams&, ParticleList&) override;
 };
 
 } // namespace cs
