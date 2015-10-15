@@ -35,15 +35,14 @@ BasicApp::BasicApp()
 	mBatch = ci::gl::Batch::create(mesh, glsl);
 
 	// SETUP METRICS
-	setupWorldBounds(0.0f, -80.0f, mCns);
+	setupWorldBounds(mSettings.mNearZ, mSettings.mFarZ, mCns);
 
 	// SETUP PARTICLES
-	GeneratorParams			gen_params(mCns);
-	RandomGenerator			gen(RandomGenerator::Mode::kAnywhere);
 	mParticles.resize(mSettings.mParticleCount);
-	gen.update(gen_params, mParticles);
+	RandomGenerator			gen(RandomGenerator::Mode::kAnywhere);
+	gen.update(GeneratorParams(mCns), mParticles);
 	for (auto& p : mParticles) {
-		p.mCurve.mP0 = p.mCurve.mP3;
+		p.mPosition = p.mCurve.mP0 = p.mCurve.mP3;
 	}
 
 	mFeeder.start(mParticles);

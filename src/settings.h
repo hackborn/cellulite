@@ -18,9 +18,9 @@ public:
 //	size_t				mParticleCount = 10;
 //	size_t				mParticleCount = 1;
 
-	// Total number of planes (i.e. the voxel depth -- width and height are
-	// determined by screen size).
-	size_t				mPlaneDepth = 80;
+	// The near and far z planes that enclose the particles.
+	float				mNearZ = 0.0f,
+						mFarZ = -80.0f;
 
 	// Amount of deceleration (per frame; should be per second)
 	float				mFriction = 0.9f;

@@ -34,9 +34,7 @@ void Feeder::update() {
 void Feeder::handle(Op &op) {
 	mHasFrame = true;
 	mFrame.swap(op.mParticles);
-	mFrame.mMaxCurveLength = op.mParticles.mMaxCurveLength;
-	mFrame.mAverageCurveLength = op.mParticles.mAverageCurveLength;
-	mFrame.mDuration = op.mParticles.mDuration;
+	mFrame.setParametersFrom(op.mParticles);
 }
 
 void Feeder::getFrame(ParticleList &out) {
@@ -56,9 +54,7 @@ void Feeder::getFrame(ParticleList &out) {
 		++src;
 		++dst;
 	}
-	out.mMaxCurveLength = mFrame.mMaxCurveLength;
-	out.mAverageCurveLength = mFrame.mAverageCurveLength;
-	out.mDuration = mFrame.mDuration;
+	out.setParametersFrom(mFrame);
 
 	// Generate the next frame
 	mHasFrame = false;

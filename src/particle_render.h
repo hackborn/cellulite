@@ -34,7 +34,10 @@ private:
 	Noise						mNoise;
 	ParticleList&				mParticles;
 	kt::time::Seconds			mTimer;
-	double						mDuration = 0.0;
+	enum class Stage			{ kTransition, kHold };
+	Stage						mStage = Stage::kHold;
+	double						mTransitionDuration = 0.0,
+								mHoldDuration = 0.0;
 	bool						mHasFrame = false;
 
 	const size_t				BUFFER_SIZE = 2000;

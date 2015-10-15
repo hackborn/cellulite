@@ -21,9 +21,10 @@ void GeneratorParams::setTo(const kt::Cns &cns) {
 void Generator::update(const GeneratorParams &p, ParticleList &list) {
 //	std::cout << "generator " << typeid(*this).name() << std::endl;
 
-	list.mDuration = 2.0;
+	list.mTransitionDuration = 2.0;
+	list.mHoldDuration = 0.2;
+
 	onUpdate(p, list);
-	list.mDuration = 2.0;
 
 	// Compute all the curve length
 	// XXX This was supposed to tell me how long I should run the animation for, but
@@ -47,7 +48,7 @@ void Generator::update(const GeneratorParams &p, ParticleList &list) {
  * @class cs::RandomGenerator
  */
 void RandomGenerator::onUpdate(const GeneratorParams &gp, ParticleList &list) {
-	list.mDuration = 4.0;
+	list.mHoldDuration = 0.0;
 
 	// Assign the start and end points.
 	if (mMode == Mode::kClosest) onUpdateClosest(gp, list);
@@ -207,7 +208,6 @@ glm::vec3 RandomLineGenerator::nextPt(const kt::math::Cube &cube) {
  * @class cs::ImageGenerator
  */
 void ImageGenerator::onUpdate(const GeneratorParams &gp, ParticleList &l) {
-	l.mDuration = 4.0;
 	ci::Surface8u		s(ci::loadImage(kt::env::expand("$(DATA)/images/Eagle 1.jpg")));
 
 	const int			total_src_size  = s.getWidth() * s.getHeight();

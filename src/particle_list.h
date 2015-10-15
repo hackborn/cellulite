@@ -13,12 +13,20 @@ class ParticleList : public std::vector<Particle> {
 public:
 	ParticleList() { }
 
+	inline void		setParametersFrom(const ParticleList &l) {
+		mMaxCurveLength = l.mMaxCurveLength;
+		mAverageCurveLength = l.mAverageCurveLength;
+		mTransitionDuration = l.mTransitionDuration,
+		mHoldDuration = l.mHoldDuration;
+	}
+
 	// The longest curve length
 	float			mMaxCurveLength = 0.0f;
 	// The average curve length
 	float			mAverageCurveLength = 0.0f;
-	// Suggested duration (in seconds) to run this list
-	double			mDuration = 2.0;
+	// Suggested duration (in seconds) to run and display this list
+	double			mTransitionDuration = 2.0,
+					mHoldDuration = 0.5;
 };
 
 } // namespace cs
