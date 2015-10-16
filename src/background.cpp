@@ -130,7 +130,7 @@ void Background::generateImage() {
 	Noise				noise(-1.0f, 1.0f);
 	const float			fw(static_cast<float>(s.getWidth())),
 						fh(static_cast<float>(s.getHeight()));
-	const float			edge_d( ((fw + fh) / 2.0f) * 0.1f);
+	const float			edge_d( ((fw + fh) / 2.0f) * 0.15f);
 	std::vector<float>	frac_t, frac_b, frac_l;
 	frac_t.resize(mWorkerWindowSize.x/16);
 	frac_b.resize(mWorkerWindowSize.x/16);
@@ -167,7 +167,8 @@ void Background::generateImage() {
 			const float			ppn = ((noise.nextFloat() + 1.0f) / 2.0f) * (-0.075f);
 
 			// Apply a border
-			const float			bv = border_value(fpt.x, fpt.y, fw, fh, edge_d) * -0.15f;
+//			const float			bv = kt::math::s_curvef(border_value(fpt.x, fpt.y, fw, fh, edge_d)) * -0.15f;
+			const float			bv = ci::math<float>::pow(border_value(fpt.x, fpt.y, fw, fh, edge_d), 2.5f) * -0.25f;
 
 			// Set the colors
 			pix.r() = f_color_to_i(mWorkerColor.r + v + ppn + bv);
