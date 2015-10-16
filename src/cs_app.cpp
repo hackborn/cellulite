@@ -9,7 +9,8 @@ namespace cs {
 BasicApp::BasicApp()
 		: mPicker(mCamera)
 		, mFeeder(mCns, mSettings)
-		, mParticleRender(mCns, mSettings, mFeeder, mParticles) {
+		, mParticleRender(mCns, mSettings, mFeeder, mParticles)
+		, mBackground(mSettings, glm::ivec2(getWindowWidth(), getWindowHeight())) {
 	
 	// SETUP PICKER
 	const glm::vec2		window_size(static_cast<float>(getWindowWidth()), static_cast<float>(getWindowHeight()));
@@ -82,6 +83,7 @@ void BasicApp::keyDown(ci::app::KeyEvent event ) {
 }
 
 void BasicApp::onUpdate() {
+	mBackground.update();
 	mFeeder.update();
 	mParticleRender.update();
 }
@@ -99,7 +101,8 @@ void BasicApp::onDraw() {
 
 	// Draw the framebuffer
 	ci::gl::setMatrices(mCameraOrtho);
-	ci::gl::clear(ci::Color(0.11f, 0.88f, 0.08f));
+	mBackground.draw();
+
 	mFbo->bindTexture();
 	ci::gl::color(1, 1, 1);
 	mBatch->draw();

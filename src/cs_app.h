@@ -4,6 +4,7 @@
 #include <cinder/gl/Batch.h>
 #include <cinder/gl/Fbo.h>
 #include "kt/app/kt_app.h"
+#include "background.h"
 #include "feeder.h"
 #include "particle_render.h"
 #include "picker_3d.h"
@@ -44,6 +45,8 @@ private:
 	ci::gl::FboRef				mFbo;
 	ci::gl::BatchRef			mBatch;
 	ParticleRender				mParticleRender;
+
+	Background					mBackground;
 };
 
 } // namespace cs

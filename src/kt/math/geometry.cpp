@@ -167,6 +167,7 @@ void get_index(const float idx, const size_t size, size_t& idxI, float& idxF) {
 		const float		scale = idx*float(size-1);
 		const float		scaleFloor = floorf(scale);
 		idxI = round(scaleFloor);
+		idxF = scale-scaleFloor;
 		if (idxI >= size-1) idxF = 0;
 	}
 }

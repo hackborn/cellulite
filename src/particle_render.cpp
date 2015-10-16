@@ -99,7 +99,7 @@ void ParticleRender::update() {
 				p.mAlpha *= mSettings.mRangeZ.convert(p.mPosition.z, kt::math::Rangef(0.1f, 1.0f));
 
 				if (mAddAccentTick == 0 && p.mHasAccents && mAccentParticles.size() < mSettings.mAccentParticleCount) {
-					mAccentParticles.push_back(Particle(p.mPosition, p.mAlpha * 0.4f));
+					mAccentParticles.push_back(Particle(p.mPosition, p.mAlpha * 0.25f));
 				}
 			}
 		}

@@ -1,6 +1,7 @@
 #ifndef CS_SETTINGS_H_
 #define CS_SETTINGS_H_
 
+#include <cinder/Color.h>
 #include "kt/math/range.h"
 
 namespace cs {
@@ -31,6 +32,8 @@ public:
 	// Range of velocities for the random generator
 	float				mRndMin = -0.5f,
 						mRndMax = 0.5f;
+
+	ci::Color			mBackgroundColor = ci::Color(0.11f, 0.78f, 0.08f);
 };
 
 } // namespace cs

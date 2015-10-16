@@ -84,6 +84,9 @@
     <ClInclude Include="..\src\kt\math\range.h">
       <Filter>Source Files\kt\math</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\background.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
@@ -137,6 +140,9 @@
     </ClCompile>
     <ClCompile Include="..\src\kt\math\range.cpp">
       <Filter>Source Files\kt\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\background.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

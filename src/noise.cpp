@@ -5,7 +5,7 @@
 namespace cs {
 
 namespace {
-const float			RND_DROPOFF = 0.9f;
+const float			RND_DROPOFF = 0.75f;
 void				generate_midpoint(Noise&, const size_t a, const size_t b, const float rnd, std::vector<float>& vec);
 }
 
