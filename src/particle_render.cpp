@@ -26,13 +26,9 @@ ci::gl::TextureRef	make_texture(const kt::Cns&);
 /**
  * @class cs::ParticleRender
  */
-ParticleRender::ParticleRender(const kt::Cns &cns, const cs::Settings &settings, Feeder &f, ParticleList &p)
+ParticleRender::ParticleRender(const kt::Cns &cns, const cs::Settings &settings)
 		: mCns(cns)
-		, mSettings(settings)
-		, mFeeder(f)
-		, mParticles(p) {
-	// Setup
-	mAccentForces.fill(128);
+		, mSettings(settings) {
 
 	// Load the texture
 	mTexture = make_texture(cns);
@@ -70,47 +66,7 @@ ParticleRender::ParticleRender(const kt::Cns &cns, const cs::Settings &settings,
 	mBatch = ci::gl::Batch::create( mesh, mGlsl, { { ci::geom::Attrib::CUSTOM_0, "vInstancePosition" } } );
 }
 
-void ParticleRender::update() {
-	updateAccents();
-
-	// Hold
-	if (mStage == Stage::kHold) {
-		if (mTimer.elapsed() >= mHoldDuration) {
-			if (mFeeder.hasFrame()) {
-				mFeeder.getFrame(mParticles);
-				mTransitionDuration = mParticles.mTransitionDuration;
-				mHoldDuration = mParticles.mHoldDuration;
-				mStage = Stage::kTransition;
-				mTimer.start();
-			}
-		}
-	// Transition
-	} else {
-		if (mTimer.elapsed() >= mTransitionDuration) {
-			mStage = Stage::kHold;
-			mTimer.start();
-		} else {
-			const float		t = static_cast<float>(kt::math::s_curved(mTimer.elapsed() / mTransitionDuration));
-			for (auto& p : mParticles) {
-				p.mPosition = p.mCurve.point(t);
-				p.mAlpha = glm::mix(p.mStartAlpha, p.mEndAlpha, t);
-
-				// Blur out a little based on distance
-				p.mAlpha *= mSettings.mRangeZ.convert(p.mPosition.z, kt::math::Rangef(0.1f, 1.0f));
-
-				if (mAddAccentTick == 0 && p.mHasAccents && mAccentParticles.size() < mSettings.mAccentParticleCount) {
-					mAccentParticles.push_back(Particle(p.mPosition, p.mAlpha * 0.25f));
-				}
-			}
-		}
-	}
-
-	static const size_t		ADD_ACCENT_TICKS = 5;
-	++mAddAccentTick;
-	if (mAddAccentTick >= ADD_ACCENT_TICKS) mAddAccentTick = 0;
-}
-
-void ParticleRender::draw() {
+void ParticleRender::drawParticles(const ParticleList &particles) {
 	ci::gl::ScopedTextureBind	stb(mTexture);
 	// Prevent writing to the depth buffer, which will block out
 	// pixels that are supposed to be transparent.
@@ -118,31 +74,6 @@ void ParticleRender::draw() {
 	ci::gl::ScopedBlendAlpha	sba;
 	ci::gl::color(1.0f, 1.0f, 1.0f, 1.0f);
 
-	drawParticles(mParticles);
-	drawParticles(mAccentParticles);
-}
-
-void ParticleRender::updateAccents() {
-	// Accents always fall down and fade out, with a little random forces thrown in.
-
-	for (auto& p : mAccentParticles) {
-		p.mAlpha -= 0.002f;
-		if (p.mAlpha <= 0.0f) {
-			std::swap(p, mAccentParticles.back());
-		} else {
-			p.mPosition.y += 0.04f;
-			// Apply forces.
-			glm::vec3		unit = mCns.mWorldBounds.toUnit(p.mPosition);
-			glm::vec3		force = mAccentForces.at(unit);
-			p.mPosition += (force * 0.00000000015f);
-		}
-	}
-	while (!mAccentParticles.empty() && mAccentParticles.back().mAlpha <= 0.0f) {
-		mAccentParticles.pop_back();
-	}
-}
-
-void ParticleRender::drawParticles(const ParticleList &particles) {
 	size_t						k = 0, size = particles.size();
 	while (size >= BUFFER_SIZE) {
 		drawParticles(k, k + BUFFER_SIZE, particles);

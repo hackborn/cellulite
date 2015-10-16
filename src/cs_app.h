@@ -6,7 +6,7 @@
 #include "kt/app/kt_app.h"
 #include "background.h"
 #include "feeder.h"
-#include "particle_render.h"
+#include "particle_view.h"
 #include "picker_3d.h"
 #include "settings.h"
 
@@ -38,13 +38,12 @@ private:
 	cs::Settings				mSettings;
 	Picker3d					mPicker;
 	Feeder						mFeeder;
-	ParticleList				mParticles;
 
 	// Drawing
 	ci::CameraOrtho				mCameraOrtho;
 	ci::gl::FboRef				mFbo;
 	ci::gl::BatchRef			mBatch;
-	ParticleRender				mParticleRender;
+	ParticleView				mParticleView;
 
 	Background					mBackground;
 };

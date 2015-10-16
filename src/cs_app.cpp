@@ -9,7 +9,7 @@ namespace cs {
 BasicApp::BasicApp()
 		: mPicker(mCamera)
 		, mFeeder(mCns, mSettings)
-		, mParticleRender(mCns, mSettings, mFeeder, mParticles)
+		, mParticleView(mCns, mSettings, mFeeder)
 		, mBackground(mSettings, glm::ivec2(getWindowWidth(), getWindowHeight())) {
 	
 	// SETUP PICKER
@@ -38,16 +38,7 @@ BasicApp::BasicApp()
 	// SETUP METRICS
 	setupWorldBounds(mSettings.mRangeZ, mCns);
 
-	// SETUP PARTICLES
-	mParticles.resize(mSettings.mParticleCount);
-	RandomGenerator			gen(RandomGenerator::Mode::kAnywhere);
-	gen.update(GeneratorParams(mCns), mParticles);
-	for (auto& p : mParticles) {
-		p.mPosition = p.mCurve.mP0 = p.mCurve.mP3;
-		p.mAlpha = p.mStartAlpha = p.mEndAlpha = 1.0f;
-	}
-
-	mFeeder.start(mParticles);
+	mParticleView.initializeParticles();
 }
 
 void BasicApp::prepareSettings(Settings* s) {
@@ -85,7 +76,7 @@ void BasicApp::keyDown(ci::app::KeyEvent event ) {
 void BasicApp::onUpdate() {
 	mBackground.update();
 	mFeeder.update();
-	mParticleRender.update();
+	mParticleView.update();
 }
 
 void BasicApp::onDraw() {
@@ -96,7 +87,7 @@ void BasicApp::onDraw() {
 		ci::gl::clear(ci::ColorA(0, 0, 0, 0));
 		ci::gl::ScopedViewport scpVp(glm::ivec2(0), mFbo->getSize());
 		ci::gl::setMatrices(mCamera);
-		mParticleRender.draw();
+		mParticleView.draw();
 	}
 
 	// Draw the framebuffer

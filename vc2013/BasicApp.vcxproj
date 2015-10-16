@@ -291,6 +291,7 @@ xcopy /y "..\..\..\lib\msw\x86\d3dcompiler_46.dll" "$(OutDir)"</Command>
     <ClCompile Include="..\src\kt\time\seconds.cpp" />
     <ClCompile Include="..\src\noise.cpp" />
     <ClCompile Include="..\src\particle_render.cpp" />
+    <ClCompile Include="..\src\particle_view.cpp" />
     <ClCompile Include="..\src\picker_3d.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -312,6 +313,7 @@ xcopy /y "..\..\..\lib\msw\x86\d3dcompiler_46.dll" "$(OutDir)"</Command>
     <ClInclude Include="..\src\particle.h" />
     <ClInclude Include="..\src\particle_list.h" />
     <ClInclude Include="..\src\particle_render.h" />
+    <ClInclude Include="..\src\particle_view.h" />
     <ClInclude Include="..\src\picker_3d.h" />
     <ClInclude Include="..\src\settings.h" />
   </ItemGroup>
