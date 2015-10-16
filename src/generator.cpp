@@ -211,9 +211,9 @@ void RandomLineGenerator::onUpdate(const GeneratorParams &gp, ParticleList &l) {
 void RandomLineGenerator::nextLines(const kt::math::Cube &cube) {
 	mLines.clear();
 
-	const int32_t		groups = mRand.nextInt(1, 8);
+	const int32_t		groups = mRand.nextInt(1, 4);
 	for (int32_t g=0; g<groups; ++g) {
-		const int32_t	lines = mRand.nextInt(10, 50);
+		const int32_t	lines = mRand.nextInt(10, 25);
 		ci::PolyLine3f	poly;
 		glm::vec3		last_pt = nextPt(cube);
 		poly.push_back(last_pt);
